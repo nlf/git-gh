@@ -13,7 +13,8 @@
     "github": "~0.1.8",
     "columnizer": "git+https://github.com/nathan-lafreniere/columnizer.git",
     "ini": "~1.1.0",
-    "exec-sync": "~0.1.5"
+    "exec-sync": "~0.1.5",
+    "prompt": "~0.2.9"
   },
   "repository": {
     "type": "git",
