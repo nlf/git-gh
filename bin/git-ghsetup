@@ -6,10 +6,11 @@ var Github = require('github'),
     fs = require('fs'),
     config = {};
 
+prompt.message = '';
+prompt.delimiter = '';
+
 function createNew() {
     console.log('Creating a new configuration..');
-    prompt.message = '';
-    prompt.delimiter = '';
     prompt.get([
         { name: 'username', required: true },
         { name: 'password', hidden: true, required: true }
@@ -36,7 +37,7 @@ var file = path.join(process.env[process.platform === 'win32' ? 'USERPROFILE' : 
 var exists = fs.existsSync(file);
 if (exists) {
     console.log('');
-    prompt.get([{ name: 'confirm', description: 'Warning! you already have a configuration file, are you sure you want to overwrite it? (y/n)', required: true, pattern: /^[ynYN]$/ }], function (err, reply) {
+    prompt.get([{ name: 'confirm', description: 'Warning! you already have a configuration file, are you sure you want to overwrite it? (y/n)', required: true, pattern: /^[ynYN]$/ }], function (err, result) {
         if (err) process.exit(0);
         if (result.confirm.toLowerCase() === 'n') process.exit(0);
         createNew();
