@@ -1,0 +1,29 @@
+{
+  "name": "git-gh",
+  "version": "0.0.1",
+  "description": "git extensions for github",
+  "bin": {
+    "git-issues": "./bin/git-issues",
+    "git-ghsetup": "./bin/git-ghsetup",
+    "git-issue": "./bin/git-issue"
+  },
+  "dependencies": {
+    "colors": "~0.6.0-1",
+    "getconfig": "~0.0.5",
+    "github": "~0.1.8",
+    "columnizer": "git+https://github.com/nathan-lafreniere/columnizer.git",
+    "ini": "~1.1.0",
+    "exec-sync": "~0.1.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nathan-lafreniere/git-gh.git"
+  },
+  "keywords": [
+    "git",
+    "github",
+    "cli"
+  ],
+  "author": "Nathan LaFreniere <quitlahok@gmail.com>",
+  "license": "MIT"
+}

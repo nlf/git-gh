@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+var Github = require('github'),
+    github = new Github({ version: '3.0.0' }),
+    prompt = require('prompt'),
+    path = require('path'),
+    fs = require('fs'),
+    config = {};
+
+function createNew() {
+    console.log('Creating a new configuration..');
+    prompt.message = '';
+    prompt.delimiter = '';
+    prompt.get([
+        { name: 'username', required: true },
+        { name: 'password', hidden: true, required: true }
+    ], function (err, result) {
+        if (err) {
+            console.error(err);
+            process.exit(1);
+        }
+        config.user = result.username;
+        github.authenticate({ type: 'basic', username: result.username, password: result.password });
+        github.authorization.create({ scopes: 'repo', note: 'git-gh extension' }, function (err, reply) {
+            if (err) {
+                console.error(err);
+                process.exit(1);
+            }
+            config.token = reply.token;
+            fs.writeFileSync(file, JSON.stringify(config), 'utf8');
+            console.log('Done!');
+        });
+    });
+}
+
+var file = path.join(process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'], './.gitgh');
+var exists = fs.existsSync(file);
+if (exists) {
+    console.log('');
+    prompt.get([{ name: 'confirm', description: 'Warning! you already have a configuration file, are you sure you want to overwrite it? (y/n)', required: true, pattern: /^[ynYN]$/ }], function (err, reply) {
+        if (err) process.exit(0);
+        if (result.confirm.toLowerCase() === 'n') process.exit(0);
+        createNew();
+    });
+} else {
+    createNew();
+}

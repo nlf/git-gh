@@ -1,0 +1,78 @@
+#!/usr/bin/env node
+var github = require('../lib/github'),
+    config = require('../lib/config'),
+    repo = require('../lib/repo')[0],
+    columnizer = require('columnizer'),
+    colors = require('colors'),
+    display = new columnizer(),
+    bold = false;
+
+var request = { user: repo.user, repo: repo.repo };
+
+if (process.argv.length > 2) {
+    var param = process.argv[2].toLowerCase();
+    if (param === 'mine') {
+        request.assignee = config.user;
+        makeRequest(request);
+    } else if (param === 'unassigned') {
+        request.assignee = 'none';
+        makeRequest(request);
+    } else if (param === 'milestone') {
+        if (!isNaN(Number(process.argv[3]))) {
+            request.milestone = Number(process.argv[3]);
+            makeRequest(request);
+        } else {
+            var search = process.argv.slice(3).join(' ').toLowerCase();
+            github.issues.getAllMilestones(request, function (err, msg) {
+                if (err) {
+                    console.error(err.message);
+                    process.exit(1);
+                }
+                msg.forEach(function (milestone) {
+                    if (milestone.title.toLowerCase() === search) {
+                        request.milestone = milestone.number;
+                    }
+                });
+                if (!request.milestone) {
+                    console.error('Milestone ' + process.argv.slice(3) + ' not found');
+                    process.exit(1);
+                }
+                makeRequest(request);
+            });
+        }
+    }
+} else {
+    makeRequest(request);
+}
+
+function makeRequest(request) {
+    github.issues.repoIssues(request, function (err, msg) {
+        if (err) {
+            console.error(err.message);
+            process.exit(1);
+        }
+        if (!msg.length) {
+            console.log('No open issues');
+            process.exit(0);
+        }
+        var issues = [];
+        display.row('ID'.bold, 'Title'.bold, 'Assigned to'.bold, 'Milestone'.bold, 'Comments'.bold);
+        display.row('-', '-', '-', '-', '-');
+        msg.forEach(function (issue) {
+            if (!issue.pull_request.html_url) {
+                var assignee = issue.assignee ? issue.assignee.login : '';
+                var milestone = issue.milestone ? issue.milestone.title : '';
+                if (bold) {
+                    issue.number = String(issue.number).bold;
+                    issue.title = issue.title.bold;
+                    assignee = assignee.bold;
+                    milestone = milestone.bold;
+                    issue.comments = String(issue.comments).bold;
+                }
+                display.row(issue.number, issue.title, assignee, milestone, issue.comments);
+                bold = !bold;
+            }
+        });
+        display.print();
+    });
+}
