@@ -26,7 +26,7 @@ github.pullRequests.getAll(request, function (err, msg) {
             issue.title = issue.title.bold;
             issue.url = issue.html_url.bold;
         }
-        display.row(issue.number, issue.title, issue.url);
+        display.row(issue.number, issue.title, issue.html_url);
         bold = !bold;
     });
     display.print();
