@@ -11,14 +11,11 @@ var github = require('../lib/github'),
             position: 0,
             help: 'what to filter on, defaults to "all"',
             choices: ['all', 'mine', 'unassigned', 'milestone']
-        },
-        milestone: {
-            position: 1,
-            help: 'milestone'
         }
     }).parse();
 
 var request = { user: repo.user, repo: repo.repo };
+opts._ = opts._.slice(1).join(' ').toLowerCase();
 
 if (opts.filter) {
     var param = opts.filter.toLowerCase();
@@ -31,11 +28,11 @@ if (opts.filter) {
         request.assignee = 'none';
         makeRequest(request);
     } else if (param === 'milestone') {
-        if (!isNaN(opts.milestone)) {
-            request.milestone = opts.milestone;
+        if (!isNaN(opts._)) {
+            request.milestone = opts._;
             makeRequest(request);
         } else {
-            var search = opts.milestone.replace(',', ' ').toLowerCase();
+            var search = opts._;
             github.issues.getAllMilestones(request, function (err, msg) {
                 if (err) {
                     console.error(err.message);
@@ -47,7 +44,7 @@ if (opts.filter) {
                     }
                 });
                 if (!request.milestone) {
-                    console.error('Milestone ' + process.argv.slice(3) + ' not found');
+                    console.error('Milestone ' + search + ' not found');
                     process.exit(1);
                 }
                 makeRequest(request);

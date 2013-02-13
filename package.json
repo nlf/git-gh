@@ -1,6 +1,6 @@
 {
   "name": "git-gh",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "git extensions for github",
   "bin": {
     "git-issues": "./bin/git-issues",
