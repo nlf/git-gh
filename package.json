@@ -1,6 +1,6 @@
 {
   "name": "git-gh",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "git extensions for github",
   "bin": {
     "git-list": "./bin/git-list",
