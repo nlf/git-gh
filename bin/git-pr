@@ -54,5 +54,5 @@ github.pullRequests.create(request, function (err, msg) {
         console.error(err.message);
         process.exit(1);
     }
-    console.log('Created pull request #' + msg.number + ' ' + msg.url);
+    console.log('Created pull request #' + msg.number + ' ' + msg.html_url);
 });
