@@ -5,16 +5,18 @@ var github = require('../lib/github'),
     colors = require('colors'),
     columnizer = require('columnizer'),
     display = new columnizer(),
-    comments = new columnizer();
+    comments = new columnizer(),
+    opts = require('nomnom').options({
+        issue: {
+            position: 0,
+            help: 'issue ID',
+            required: true
+        }
+    }).parse();
 
 var request = { user: repo.user, repo: repo.repo };
 
-if (!process.argv.length === 3) {
-    console.error('Must specify an issue ID');
-    process.exit(1);
-}
-
-var issue = Number(process.argv[2]);
+var issue = opts.issue;
 if (isNaN(issue)) {
     console.error('Invalid issue ID (must be a number)');
     process.exit(1);
