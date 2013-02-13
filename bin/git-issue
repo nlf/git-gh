@@ -24,11 +24,19 @@ var request = { user: repo.user, repo: repo.repo, labels: [] };
 request.title = opts.title;
 if (!opts.message) {
     editor(function (err, text) {
+        if (text.trim().length === 0 && !request.title) {
+            console.error('Refusing to create an empty issue');
+            process.exit(1);
+        }
         request.body = text;
         if (!request.title) request.title = text.slice(0, 15) + '...';
         makeRequest();
     });
 } else {
+    if (opts.message.trim().length === 0 && !request.title) {
+        console.error('Refusing to create an empty issue');
+        process.exit(1);
+    }
     if (!request.title) request.title = text.slice(0, 15) + '...';
     request.body = opts.message;
     makeRequest();
