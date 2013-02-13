@@ -16,7 +16,8 @@
     "columnizer": "git+https://github.com/nathan-lafreniere/columnizer.git",
     "ini": "~1.1.0",
     "exec-sync": "~0.1.5",
-    "prompt": "~0.2.9"
+    "prompt": "~0.2.9",
+    "nomnom": "~1.5.3"
   },
   "repository": {
     "type": "git",
