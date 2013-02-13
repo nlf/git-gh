@@ -1,0 +1,42 @@
+#!/usr/bin/env node
+var github = require('../lib/github'),
+    config = require('../lib/config'),
+    repo = require('../lib/repo')[0],
+    colors = require('colors'),
+    columnizer = require('columnizer'),
+    display = new columnizer(),
+    comments = new columnizer();
+
+var request = { user: repo.user, repo: repo.repo };
+
+if (!process.argv.length === 4) {
+    console.error('Must specify an issue ID and a person to assign the issue');
+    process.exit(1);
+}
+
+var issue = Number(process.argv[2]);
+if (isNaN(issue)) {
+    console.error('Invalid issue ID (must be a number)');
+    process.exit(1);
+}
+
+var assignee = process.argv[3];
+
+request.number = issue;
+request.assignee = assignee === 'noone' ? null : assignee;
+
+github.issues.getRepoIssue(request, function (err, msg) {
+    if (err) {
+        console.error(err.message);
+        process.exit(1);
+    }
+    request.title = msg.title;
+    request.labels = msg.labels;
+    github.issues.edit(request, function (err, msg) {
+        if (err) {
+            console.error(err.message);
+            process.exit(1);
+        }
+        console.log('Issue ' + request.number + ' is now assigned to ' + assignee);
+    });
+});

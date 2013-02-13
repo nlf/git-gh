@@ -1,11 +1,13 @@
 {
   "name": "git-gh",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "git extensions for github",
   "bin": {
     "git-issues": "./bin/git-issues",
     "git-ghsetup": "./bin/git-ghsetup",
-    "git-issue": "./bin/git-issue"
+    "git-issue": "./bin/git-issue",
+    "git-claim": "./bin/git-claim",
+    "git-assign": "./bin/git-assign"
   },
   "dependencies": {
     "colors": "~0.6.0-1",
