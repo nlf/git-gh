@@ -2,42 +2,48 @@
 var github = require('../lib/github'),
     config = require('../lib/config'),
     repo = require('../lib/repo')[0],
-    exec = require('exec-sync'),
     colors = require('colors'),
     columnizer = require('columnizer'),
     display = new columnizer(),
     comments = new columnizer(),
     editor = require('../lib/editor'),
     opts = require('nomnom').options({
+        issue: {
+            position: 0,
+            help: 'issue or pull request ID',
+            required: true
+        },
         message: {
             abbr: 'm',
-            help: 'message body'
-        },
-        title: {
-            abbr: 't',
-            help: 'message title'
+            help: 'issue message'
         }
     }).parse();
 
-var request = { user: repo.user, repo: repo.repo, labels: [] };
+var request = { user: repo.user, repo: repo.repo };
 
-request.title = opts.title;
-if (!opts.message) {
+var issue = opts.issue;
+if (isNaN(issue)) {
+    console.error('Invalid issue ID (must be a number)');
+    process.exit(1);
+}
+
+request.number = issue;
+if (opts.message) {
+    request.body = opts.message;
+    makeRequest();
+} else {
     editor(function (err, text) {
         request.body = text;
         makeRequest();
     });
-} else {
-    request.body = opts.message;
-    makeRequest();
 }
 
 function makeRequest() {
-    github.issues.create(request, function (err, msg) {
+    github.issues.createComment(request, function (err, msg) {
         if (err) {
             console.error(err.message);
             process.exit(1);
         }
-        console.log('Created issue #' + msg.number + ' ' + msg.html_url);
+        console.log('Added comment to issue ' + issue);
     });
 }

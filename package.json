@@ -1,21 +1,23 @@
 {
   "name": "git-gh",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "description": "git extensions for github",
   "bin": {
-    "git-issues": "./bin/git-issues",
+    "git-list": "./bin/git-list",
     "git-ghsetup": "./bin/git-ghsetup",
     "git-issue": "./bin/git-issue",
     "git-claim": "./bin/git-claim",
     "git-assign": "./bin/git-assign",
     "git-pr": "./bin/git-pr",
-    "git-prs": "./bin/git-prs"
+    "git-detail": "./bin/git-detail",
+    "git-comment": "./bin/git-comment",
+    "git-close": "./bin/git-close"
   },
   "dependencies": {
     "colors": "~0.6.0-1",
     "getconfig": "~0.0.5",
     "github": "~0.1.8",
-    "columnizer": "git+https://github.com/nathan-lafreniere/columnizer.git",
+    "columnizer": "~0.0.5",
     "ini": "~1.1.0",
     "exec-sync": "~0.1.5",
     "prompt": "~0.2.9",

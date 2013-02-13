@@ -10,7 +10,7 @@ var github = require('../lib/github'),
         filter: {
             position: 0,
             help: 'what to filter on, defaults to "all"',
-            choices: ['all', 'mine', 'unassigned', 'milestone']
+            choices: ['all', 'prs', 'issues', 'mine', 'unassigned', 'milestone']
         }
     }).parse();
 
@@ -50,6 +50,8 @@ if (opts.filter) {
                 makeRequest(request);
             });
         }
+    } else {
+        makeRequest(request);
     }
 } else {
     makeRequest(request);
@@ -69,9 +71,13 @@ function makeRequest(request) {
         display.row('ID'.bold, 'Title'.bold, 'Assigned to'.bold, 'Milestone'.bold, 'Comments'.bold);
         display.row('-', '-', '-', '-', '-');
         msg.forEach(function (issue) {
-            if (!issue.pull_request.html_url) {
+            var valid = true;
+            if (opts.filter === 'prs' && !issue.pull_request.html_url) valid = false;
+            if (opts.filter === 'issues' && issue.pull_request.html_url) valid = false;
+            if (valid) {
                 var assignee = issue.assignee ? issue.assignee.login : '';
                 var milestone = issue.milestone ? issue.milestone.title : '';
+                if (issue.pull_request.html_url) issue.title = '[pr] ' + issue.title;
                 if (bold) {
                     issue.number = String(issue.number).bold;
                     issue.title = issue.title.bold;

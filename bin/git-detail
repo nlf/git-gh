@@ -1,0 +1,56 @@
+#!/usr/bin/env node
+var github = require('../lib/github'),
+    config = require('../lib/config'),
+    repo = require('../lib/repo')[0],
+    colors = require('colors'),
+    columnizer = require('columnizer'),
+    display = new columnizer(),
+    comments = new columnizer(),
+    opts = require('nomnom').options({
+        issue: {
+            position: 0,
+            help: 'issue or pull request ID',
+            required: true
+        }
+    }).parse();
+
+var request = { user: repo.user, repo: repo.repo };
+
+var issue = opts.issue;
+if (isNaN(issue)) {
+    console.error('Invalid issue ID (must be a number)');
+    process.exit(1);
+}
+
+request.number = issue;
+
+github.issues.getRepoIssue(request, function (err, msg) {
+    if (err) {
+        console.error(err.message);
+        process.exit(1);
+    }
+    var type = msg.pull_request.html_url ? 'Pull Request' : 'Issue';
+    var assignee = msg.assignee ? msg.assignee.login : 'no one';
+    var milestone = msg.milestone ? msg.milestone.title : 'none';
+    display.row('Title: '.bold + msg.title, 'Opened by: '.bold + msg.user.login, 'Assigned to: '.bold + assignee, 'Milestone: '.bold + milestone);
+    display.row('URL: '.bold + msg.pull_request.html_url, 'Type: '.bold + type, 'Status: '.bold + msg.state);
+    display.print();
+    console.log();
+    console.log(msg.body);
+    console.log();
+    if (msg.comments > 0) {
+        console.log('Comments');
+        console.log('--------');
+        console.log();
+        github.issues.getComments(request, function (err, msg) {
+            if (err) {
+                console.error(err.message);
+                process.exit(1);
+            }
+            msg.forEach(function (comment) {
+                console.log(comment.user.login.bold + ': '.bold + comment.body);
+                console.log();
+            });
+        });
+    }
+});

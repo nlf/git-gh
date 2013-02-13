@@ -7,6 +7,7 @@ var github = require('../lib/github'),
     columnizer = require('columnizer'),
     display = new columnizer(),
     comments = new columnizer(),
+    editor = require('../lib/editor'),
     opts = require('nomnom').options({
         target: {
             position: 0,
@@ -47,12 +48,22 @@ if (branch === target) {
 request.head = repo.user + ':' + branch;
 request.base = target;
 request.title = opts.title || 'Merge ' + branch;
-request.body = opts.message || 'Automated pull request to merge ' + branch + ' into ' + branch;
+if (!opts.message) {
+    editor(function (err, text) {
+        request.body = text;
+        makeRequest();
+    });
+} else {
+    request.body = opts.message;
+    makeRequest();
+}
 
-github.pullRequests.create(request, function (err, msg) {
-    if (err) {
-        console.error(err.message);
-        process.exit(1);
-    }
-    console.log('Created pull request #' + msg.number + ' ' + msg.html_url);
-});
+function makeRequest() {
+    github.pullRequests.create(request, function (err, msg) {
+        if (err) {
+            console.error(err.message);
+            process.exit(1);
+        }
+        console.log('Created pull request #' + msg.number + ' ' + msg.html_url);
+    });
+}
