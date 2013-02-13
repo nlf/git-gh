@@ -3,6 +3,8 @@ Github extensions for Git
 
 To install:
 
+First, install node.js (at least 0.8).
+
 ```
 (sudo) npm install -g git-gh
 git ghsetup
