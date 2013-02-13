@@ -25,9 +25,11 @@ request.title = opts.title;
 if (!opts.message) {
     editor(function (err, text) {
         request.body = text;
+        if (!request.title) request.title = text.slice(0, 15) + '...';
         makeRequest();
     });
 } else {
+    if (!request.title) request.title = text.slice(0, 15) + '...';
     request.body = opts.message;
     makeRequest();
 }
