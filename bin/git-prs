@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+var github = require('../lib/github'),
+    config = require('../lib/config'),
+    repo = require('../lib/repo')[0],
+    columnizer = require('columnizer'),
+    colors = require('colors'),
+    display = new columnizer(),
+    bold = false;
+
+var request = { user: repo.user, repo: repo.repo };
+
+github.pullRequests.getAll(request, function (err, msg) {
+    if (err) {
+        console.error(err.message);
+        process.exit(1);
+    }
+    if (!msg.length) {
+        console.log('No open pull requests');
+        process.exit(0);
+    }
+    display.row('ID'.bold, 'Title'.bold, 'URL'.bold);
+    display.row('-', '-', '-');
+    msg.forEach(function (issue) {
+        if (bold) {
+            issue.number = String(issue.number).bold;
+            issue.title = issue.title.bold;
+            issue.url = issue.html_url.bold;
+        }
+        display.row(issue.number, issue.title, issue.url);
+        bold = !bold;
+    });
+    display.print();
+});

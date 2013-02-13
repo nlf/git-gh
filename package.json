@@ -1,6 +1,6 @@
 {
   "name": "git-gh",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "git extensions for github",
   "bin": {
     "git-issues": "./bin/git-issues",
@@ -8,7 +8,8 @@
     "git-issue": "./bin/git-issue",
     "git-claim": "./bin/git-claim",
     "git-assign": "./bin/git-assign",
-    "git-pr": "./bin/git-pr"
+    "git-pr": "./bin/git-pr",
+    "git-prs": "./bin/git-prs"
   },
   "dependencies": {
     "colors": "~0.6.0-1",
