@@ -7,7 +7,8 @@
     "git-ghsetup": "./bin/git-ghsetup",
     "git-issue": "./bin/git-issue",
     "git-claim": "./bin/git-claim",
-    "git-assign": "./bin/git-assign"
+    "git-assign": "./bin/git-assign",
+    "git-pr": "./bin/git-pr"
   },
   "dependencies": {
     "colors": "~0.6.0-1",
