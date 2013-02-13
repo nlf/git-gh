@@ -5,24 +5,37 @@ var github = require('../lib/github'),
     columnizer = require('columnizer'),
     colors = require('colors'),
     display = new columnizer(),
-    bold = false;
+    bold = false,
+    opts = require('nomnom').options({
+        filter: {
+            position: 0,
+            help: 'what to filter on, defaults to "all"',
+            choices: ['all', 'mine', 'unassigned', 'milestone']
+        },
+        milestone: {
+            position: 1,
+            help: 'milestone'
+        }
+    }).parse();
 
 var request = { user: repo.user, repo: repo.repo };
 
-if (process.argv.length > 2) {
-    var param = process.argv[2].toLowerCase();
-    if (param === 'mine') {
+if (opts.filter) {
+    var param = opts.filter.toLowerCase();
+    if (param === 'all') {
+        makeRequest(request);
+    } else if (param === 'mine') {
         request.assignee = config.user;
         makeRequest(request);
     } else if (param === 'unassigned') {
         request.assignee = 'none';
         makeRequest(request);
     } else if (param === 'milestone') {
-        if (!isNaN(Number(process.argv[3]))) {
-            request.milestone = Number(process.argv[3]);
+        if (!isNaN(opts.milestone)) {
+            request.milestone = opts.milestone;
             makeRequest(request);
         } else {
-            var search = process.argv.slice(3).join(' ').toLowerCase();
+            var search = opts.milestone.replace(',', ' ').toLowerCase();
             github.issues.getAllMilestones(request, function (err, msg) {
                 if (err) {
                     console.error(err.message);
