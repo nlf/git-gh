@@ -1,6 +1,10 @@
 Github extensions for Git
 =======
 
+NOTE
+====
+This branch is the C rewrite. Most of it does not work or doesn't exist. Don't use it.
+
 To install:
 
 First, install node.js (at least 0.8).
