@@ -13,6 +13,8 @@ extern struct json_object* readConfig() {
     wordexp_t configPath;
     wordexp("~/.gitgh", &configPath, 0);
     FILE *fp = fopen(configPath.we_wordv[0], "r");
+    if (fp == NULL)
+        return NULL;
     wordfree(&configPath);
 
     fseek(fp, 0L, SEEK_END);

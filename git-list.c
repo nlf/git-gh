@@ -53,6 +53,8 @@ int main() {
     int i = 0;
 
     repo = getRepo();
+    if (repo == NULL)
+        return 1;
     int pathlen = strlen(repo) + 15;
     char path[pathlen];
     strncpy(path, "/repos/", pathlen);
@@ -60,6 +62,10 @@ int main() {
     strncat(path, "/issues\0", pathlen);
 
     config = readConfig();
+    if (config == NULL) {
+        fprintf(stderr, "You don't appear to have a ~/.gitgh config file\n");
+        return 1;
+    }
     userobj = json_object_object_get(config, "user");
     user = json_object_get_string(userobj);
     tokenobj = json_object_object_get(config, "token");
@@ -75,7 +81,7 @@ int main() {
             bold = !bold;
         }
     } else {
-        fprintf(stdout, "No open issues found\n");
+        printf("No open issues found\n");
     }
     return 0;
 }
