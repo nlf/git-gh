@@ -96,6 +96,7 @@ int main(int argc, char *argv[]) {
     strncpy(path, base, pathlen);
     strncat(path, repo, pathlen);
     strncat(path, query, pathlen);
+    free(query);
 
     response = makeRequest(path, token);
     len = json_object_array_length(response);
