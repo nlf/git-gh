@@ -39,7 +39,7 @@ void printIssue(json_object* issue, bool bold) {
     fprintf(stdout, format, json_object_get_int(number), -100, 100, json_object_get_string(title), json_object_get_string(assignee_login), json_object_get_string(milestone_title), json_object_get_int(comments));
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     struct json_object* config;
     struct json_object* userobj;
     struct json_object* tokenobj;
@@ -51,15 +51,15 @@ int main() {
     bool bold = false;
     int len = 0;
     int i = 0;
+    char *filter = "all";
+    char *milestone = NULL;
 
-    repo = getRepo();
-    if (repo == NULL)
-        return 1;
-    int pathlen = strlen(repo) + 15;
-    char path[pathlen];
-    strncpy(path, "/repos/", pathlen);
-    strncat(path, repo, pathlen);
-    strncat(path, "/issues\0", pathlen);
+    if (argc > 1) {
+        filter = argv[1];
+        if (strcmp(filter, "milestone") == 0 && argc == 3) {
+            milestone = argv[2];
+        }
+    }
 
     config = readConfig();
     if (config == NULL) {
@@ -71,14 +71,48 @@ int main() {
     tokenobj = json_object_object_get(config, "token");
     token = json_object_get_string(tokenobj);
 
+    repo = getRepo();
+    if (repo == NULL)
+        return 1;
+    char *base = "/repos/";
+    int querylen = 8;
+    char *query;
+    if (strcmp(filter, "mine") == 0) {
+        querylen += (10 + strlen(user));
+        query = (char *)calloc(sizeof(char), querylen);
+        strncpy(query, "/issues?assignee=", querylen);
+        strncat(query, user, querylen);
+    } else if (strcmp(filter, "unassigned") == 0) {
+        querylen += 14;
+        query = (char *)calloc(sizeof(char), querylen);
+        strncpy(query, "/issues?assignee=none\0", querylen);
+    } else {
+        query = (char *)calloc(sizeof(char), querylen);
+        strncpy(query, "/issues\0", querylen);
+    }
+
+    int pathlen = strlen(repo) + strlen(base) + strlen(query);
+    char path[pathlen];
+    strncpy(path, base, pathlen);
+    strncat(path, repo, pathlen);
+    strncat(path, query, pathlen);
+
     response = makeRequest(path, token);
     len = json_object_array_length(response);
     if (len > 0) {
         printIssueHeader();
         for (i = 0; i < len; i++) {
             issue = json_object_array_get_idx(response, i);
-            printIssue(issue, bold);
-            bold = !bold;
+            bool is_pull_request = json_object_get_string(json_object_object_get(json_object_object_get(issue, "pull_request"), "html_url")) != NULL;
+            bool valid = true;
+            if (strcmp(filter, "prs") == 0 && !is_pull_request)
+                valid = false;
+            if (strcmp(filter, "issues") == 0 && is_pull_request)
+                valid = false;
+            if (valid) {
+                printIssue(issue, bold);
+                bold = !bold;
+            }
         }
     } else {
         printf("No open issues found\n");
