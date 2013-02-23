@@ -1,22 +1,24 @@
 OBJ = build/request.o build/config.o build/repo.o build/git-list.o
 BIN = bin/git-list
+CC = gcc
+CFLAGS = -ljson -lcurl -liniparser
 
 all: $(BIN)
 
 build/request.o: lib/request.c lib/request.h
-	gcc -c lib/request.c -o build/request.o
+	$(CC) -c lib/request.c -o build/request.o
 
 build/config.o: lib/config.c lib/config.h
-	gcc -c lib/config.c -o build/config.o
+	$(CC) -c lib/config.c -o build/config.o
 
 build/repo.o: lib/repo.c lib/repo.h
-	gcc -c lib/repo.c -o build/repo.o
+	$(CC) -c lib/repo.c -o build/repo.o
 
 build/git-list.o: git-list.c
-	gcc -c git-list.c -o build/git-list.o
+	$(CC) -c git-list.c -o build/git-list.o
 
 bin/git-list: $(OBJ)
-	gcc build/git-list.o build/request.o build/config.o build/repo.o -o bin/git-list -l json -l curl -l iniparser
+	$(CC) build/git-list.o build/request.o build/config.o build/repo.o -o bin/git-list $(CFLAGS)
 
 clean:
 	rm -rf $(OBJ)
