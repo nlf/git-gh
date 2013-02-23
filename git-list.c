@@ -140,7 +140,6 @@ int main(int argc, char *argv[]) {
 
     response = makeRequest(path, token);
     len = json_object_array_length(response);
-    printf("got %d items\n", len);
     if (len > 0) {
         printIssueHeader();
         for (i = 0; i < len; i++) {
