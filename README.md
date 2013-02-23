@@ -19,7 +19,14 @@ Commands
 ========
 
 ```
-git list
+git list [filter]
 ```
 
-List open issues and pull requests.
+List open issues and pull requests. The "filter" parameter can be any of the following
+
+* all
+* prs - only show pull requests
+* issues - only show issues
+* mine - only items that are assigned to you
+* unassigned - only items that are unassigned
+* milestone x - only items that are associated with milestone "x" (case sensitive)
