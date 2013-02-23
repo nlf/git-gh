@@ -39,6 +39,40 @@ void printIssue(json_object* issue, bool bold) {
     fprintf(stdout, format, json_object_get_int(number), -100, 100, json_object_get_string(title), json_object_get_string(assignee_login), json_object_get_string(milestone_title), json_object_get_int(comments));
 }
 
+int findMilestone(char *search, char *repo, const char *token) {
+    struct json_object* response;
+    struct json_object* milestone;
+    struct json_object* titleobj;
+    struct json_object* numberobj;
+    const char *title;
+    int number = 0;
+    char *path;
+    int len;
+    int i;
+    int pathlen = strlen(repo) + 19;
+    path = (char *)calloc(sizeof(char), pathlen);
+    strncpy(path, "/repos/", pathlen);
+    strncat(path, repo, pathlen);
+    strncat(path, "/milestones\0", pathlen);
+
+    response = makeRequest(path, token);
+    len = json_object_array_length(response);
+    if (len > 0) {
+        for (i = 0; i < len; i++) {
+            milestone = json_object_array_get_idx(response, i);
+            titleobj = json_object_object_get(milestone, "title");
+            title = json_object_get_string(titleobj);
+            if (strcasecmp(title, search) == 0) {
+                numberobj = json_object_object_get(milestone, "number");
+                number = json_object_get_int(numberobj);
+                break;
+            }
+        }
+    }
+    free(response);
+    return number;
+}
+
 int main(int argc, char *argv[]) {
     struct json_object* config;
     struct json_object* userobj;
@@ -74,32 +108,39 @@ int main(int argc, char *argv[]) {
     repo = getRepo();
     if (repo == NULL)
         return 1;
-    char *base = "/repos/";
     int querylen = 8;
     char *query;
     if (strcmp(filter, "mine") == 0) {
         querylen += (10 + strlen(user));
         query = (char *)calloc(sizeof(char), querylen);
-        strncpy(query, "/issues?assignee=", querylen);
-        strncat(query, user, querylen);
+        sprintf(query, "/issues?assignee=%s", user);
     } else if (strcmp(filter, "unassigned") == 0) {
         querylen += 14;
         query = (char *)calloc(sizeof(char), querylen);
-        strncpy(query, "/issues?assignee=none\0", querylen);
+        sprintf(query, "/issues?assignee=none");
+    } else if (strcmp(filter, "milestone") == 0) {
+        int milestonenum = findMilestone(milestone, repo, token);
+        if (milestonenum) {
+            querylen += (18 + strlen(milestone));
+            query = (char *)calloc(sizeof(char), querylen);
+            sprintf(query, "/issues?milestone=%d", milestonenum);
+        } else {
+            fprintf(stderr, "Unable to find milestone \"%s\"\n", milestone);
+            return 1;
+        }
     } else {
         query = (char *)calloc(sizeof(char), querylen);
-        strncpy(query, "/issues\0", querylen);
+        sprintf(query, "/issues");
     }
 
-    int pathlen = strlen(repo) + strlen(base) + strlen(query);
+    int pathlen = strlen(repo) + 7 + strlen(query);
     char path[pathlen];
-    strncpy(path, base, pathlen);
-    strncat(path, repo, pathlen);
-    strncat(path, query, pathlen);
+    sprintf(path, "/repos/%s%s", repo, query);
     free(query);
 
     response = makeRequest(path, token);
     len = json_object_array_length(response);
+    printf("got %d items\n", len);
     if (len > 0) {
         printIssueHeader();
         for (i = 0; i < len; i++) {
@@ -118,5 +159,6 @@ int main(int argc, char *argv[]) {
     } else {
         printf("No open issues found\n");
     }
+    free(response);
     return 0;
 }

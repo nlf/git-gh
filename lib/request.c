@@ -27,19 +27,19 @@ extern struct json_object *makeRequest(char *path, const char *token) {
     CURL *curl;
     CURLcode res;
     struct curl_slist *headers = NULL;
-    struct json_object *response;
+    struct json_object *response = NULL;
     response = (struct json_object*)calloc(sizeof(struct json_object), 1);
-    char data[BUF_LEN];
+    char *data;
     char *tokenHeader = "Authorization: token ";
     char authHeader[strlen(tokenHeader) + strlen(token) + 1];
-    strlcpy(authHeader, tokenHeader, sizeof(authHeader));
-    strlcat(authHeader, token, sizeof(authHeader));
+    sprintf(authHeader, "%s%s", tokenHeader, token);
 
-    memset(data, 0, BUF_LEN * sizeof(char));
+    data = (char *)calloc(sizeof(char), BUF_LEN);
 
     char fullUrl[strlen(baseUrl) + strlen(path) + 1];
-    strlcpy(fullUrl, baseUrl, sizeof(fullUrl));
-    strlcat(fullUrl, path, sizeof(fullUrl));
+    sprintf(fullUrl, "%s%s", baseUrl, path);
+
+    bytesWritten = 0;
 
     curl_global_init(CURL_GLOBAL_DEFAULT);
     curl = curl_easy_init();
@@ -59,6 +59,7 @@ extern struct json_object *makeRequest(char *path, const char *token) {
             return NULL;
         }
         response = json_tokener_parse(data);
+        free(data);
         return response;
     } else {
         curl_global_cleanup();
