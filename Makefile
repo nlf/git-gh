@@ -13,3 +13,6 @@ git-list: libs
 clean:
 	rm -rf build
 	rm -rf bin/*
+
+install: git-list
+	install bin/* /usr/local/bin/

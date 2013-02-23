@@ -13,7 +13,7 @@ void printIssueHeader() {
     fprintf(stdout, format, "ID", "Title", "Assignee", "Milestone", "Comments");
 }
 
-void printIssue(json_object* issue, bool bold) {
+void printIssue(json_object* issue, bool bold, bool is_pr) {
     struct json_object *title = NULL;
     struct json_object *number = NULL;
     struct json_object *milestone = NULL;
@@ -21,10 +21,26 @@ void printIssue(json_object* issue, bool bold) {
     struct json_object *assignee = NULL;
     struct json_object *assignee_login = NULL;
     struct json_object *comments = NULL;
+    char *boldstart = "\x1b[1m";
+    char *boldend = "\x1b[0m";
+    int formatlen;
+    char *lineformat;
+    char *format;
 
-    char* format = "%-5d %*.*s %-15.15s %-15.15s %-5d\n";
-    if (bold)
-        format = "\x1b[1m%-5d %*.*s %-15.15s %-15.15s %-5d\x1b[0m\n";
+    if (is_pr) {
+        lineformat = "%-5d [pr] %-95.95s %-15.15s %-15.15s %-5d";
+    } else {
+        lineformat = "%-5d %-100.100s %-15.15s %-15.15s %-5d";
+    }
+    if (bold) {
+        formatlen = strlen(lineformat) + strlen(boldstart) + strlen(boldend) + 1;
+        format = (char *)calloc(sizeof(char), formatlen);
+        sprintf(format, "\x1b[1m%s\x1b[0m\n", lineformat);
+    } else {
+        formatlen = strlen(lineformat) + 1;
+        format = (char *)calloc(sizeof(char), formatlen);
+        sprintf(format, "%s\n", lineformat);
+    }
 
     title = json_object_object_get(issue, "title");
     number = json_object_object_get(issue, "number");
@@ -36,7 +52,8 @@ void printIssue(json_object* issue, bool bold) {
     if (milestone)
         milestone_title = json_object_object_get(milestone, "title");
 
-    fprintf(stdout, format, json_object_get_int(number), -100, 100, json_object_get_string(title), json_object_get_string(assignee_login), json_object_get_string(milestone_title), json_object_get_int(comments));
+    fprintf(stdout, format, json_object_get_int(number), json_object_get_string(title), json_object_get_string(assignee_login), json_object_get_string(milestone_title), json_object_get_int(comments));
+    free(format);
 }
 
 int findMilestone(char *search, char *repo, const char *token) {
@@ -151,7 +168,7 @@ int main(int argc, char *argv[]) {
             if (strcmp(filter, "issues") == 0 && is_pull_request)
                 valid = false;
             if (valid) {
-                printIssue(issue, bold);
+                printIssue(issue, bold, is_pull_request);
                 bold = !bold;
             }
         }
