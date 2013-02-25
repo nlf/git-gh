@@ -1,5 +1,5 @@
-OBJ = build/request.o build/config.o build/repo.o build/git-list.o
-BIN = bin/git-list
+OBJ = build/request.o build/config.o build/repo.o build/git-list.o build/git-detail.o
+BIN = bin/git-list bin/git-detail
 CC = gcc
 CFLAGS = -ljson -lcurl -liniparser
 
@@ -17,8 +17,14 @@ build/repo.o: lib/repo.c lib/repo.h
 build/git-list.o: git-list.c
 	$(CC) -c git-list.c -o build/git-list.o
 
+build/git-detail.o: git-detail.c
+	$(CC) -c git-detail.c -o build/git-detail.o
+
 bin/git-list: $(OBJ)
 	$(CC) build/git-list.o build/request.o build/config.o build/repo.o -o bin/git-list $(CFLAGS)
+
+bin/git-detail: $(OBJ)
+	$(CC) build/git-detail.o build/request.o build/config.o build/repo.o -o bin/git-detail $(CFLAGS)
 
 clean:
 	rm -rf $(OBJ)
