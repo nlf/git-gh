@@ -32,13 +32,13 @@ void printIssue(json_object* issue, bool bold, bool is_pr) {
         lineformat = "%-5d %-100.100s %-15.15s %-15.15s %-5d";
     }
     if (bold) {
-        formatlen = strlen(lineformat) + strlen(boldstart) + strlen(boldend) + 1;
+        formatlen = strlen(lineformat) + strlen(boldstart) + strlen(boldend) + 2;
         format = (char *)calloc(sizeof(char), formatlen);
-        sprintf(format, "\x1b[1m%s\x1b[0m\n", lineformat);
+        snprintf(format, formatlen, "\x1b[1m%s\x1b[0m\n", lineformat);
     } else {
-        formatlen = strlen(lineformat) + 1;
+        formatlen = strlen(lineformat) + 2;
         format = (char *)calloc(sizeof(char), formatlen);
-        sprintf(format, "%s\n", lineformat);
+        snprintf(format, formatlen, "%s\n", lineformat);
     }
 
     fprintf(stdout, format, number, title, assignee, milestone, comments);
@@ -55,7 +55,7 @@ int findMilestone(char *search, char *repo, const char *token) {
     int i;
     int pathlen = strlen(repo) + 19;
     path = (char *)calloc(sizeof(char), pathlen);
-    sprintf(path, "/repos/%s/milestones", repo);
+    snprintf(path, pathlen, "/repos/%s/milestones", repo);
 
     response = makeRequest(path, token);
     len = json_object_array_length(response);
@@ -109,29 +109,29 @@ int main(int argc, char *argv[]) {
     if (strcmp(filter, "mine") == 0) {
         querylen += (10 + strlen(user));
         query = (char *)calloc(sizeof(char), querylen);
-        sprintf(query, "/issues?assignee=%s", user);
+        snprintf(query, querylen, "/issues?assignee=%s", user);
     } else if (strcmp(filter, "unassigned") == 0) {
         querylen += 14;
         query = (char *)calloc(sizeof(char), querylen);
-        sprintf(query, "/issues?assignee=none");
+        snprintf(query, querylen, "/issues?assignee=none");
     } else if (strcmp(filter, "milestone") == 0) {
         int milestonenum = findMilestone(milestone, repo, token);
         if (milestonenum) {
             querylen += (18 + strlen(milestone));
             query = (char *)calloc(sizeof(char), querylen);
-            sprintf(query, "/issues?milestone=%d", milestonenum);
+            snprintf(query, querylen, "/issues?milestone=%d", milestonenum);
         } else {
             fprintf(stderr, "Unable to find milestone \"%s\"\n", milestone);
             return 1;
         }
     } else {
         query = (char *)calloc(sizeof(char), querylen);
-        sprintf(query, "/issues");
+        snprintf(query, querylen, "/issues");
     }
 
-    int pathlen = strlen(repo) + 7 + strlen(query);
+    int pathlen = strlen(repo) + 8 + strlen(query);
     char path[pathlen];
-    sprintf(path, "/repos/%s%s", repo, query);
+    snprintf(path, pathlen, "/repos/%s%s", repo, query);
     free(query);
 
     response = makeRequest(path, token);
