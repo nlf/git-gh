@@ -1,5 +1,5 @@
 LIB = lib/request.o lib/config.o lib/repo.o lib/jsonhelpers.o
-BIN = git-list git-detail git-ghsetup
+BIN = git-list git-detail git-ghsetup git-claim git-assign
 CC = gcc
 LINKLIBS = -ljson -lcurl -liniparser
 
@@ -13,6 +13,12 @@ git-detail: $(LIB) git-detail.o
 
 git-ghsetup: $(LIB) git-ghsetup.o
 	$(CC) git-ghsetup.o $(LIB) -o git-ghsetup $(LINKLIBS)
+
+git-claim: $(LIB) git-claim.o
+	$(CC) git-claim.o $(LIB) -o git-claim $(LINKLIBS)
+
+git-assign: $(LIB) git-assign.o
+	$(CC) git-assign.o $(LIB) -o git-assign $(LINKLIBS)
 
 clean:
 	rm -rf *.o
