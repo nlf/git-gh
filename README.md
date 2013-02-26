@@ -30,3 +30,27 @@ List open issues and pull requests. The "filter" parameter can be any of the fol
 * mine - only items that are assigned to you
 * unassigned - only items that are unassigned
 * milestone x - only items that are associated with milestone "x" (case sensitive)
+
+```
+git detail <id>
+```
+
+Get detail on issue/pull request with the given id
+
+```
+git claim <id>
+```
+
+Assign the given issue/pull request to yourself
+
+```
+git assign <id> <username>
+```
+
+Assign the given issue/pull request to username
+
+```
+git close <id>
+```
+
+Close the issue/pull request. This will *not* merge a pull request.
