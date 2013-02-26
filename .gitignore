@@ -1,3 +1,4 @@
 *.o
 git-list
 git-detail
+git-ghsetup

@@ -13,9 +13,9 @@ extern struct json_object* readConfig() {
     wordexp_t configPath;
     wordexp("~/.gitgh", &configPath, 0);
     FILE *fp = fopen(configPath.we_wordv[0], "r");
+    wordfree(&configPath);
     if (fp == NULL)
         return NULL;
-    wordfree(&configPath);
 
     fseek(fp, 0L, SEEK_END);
     fileLength = ftell(fp);
@@ -28,7 +28,20 @@ extern struct json_object* readConfig() {
     }
 
     fread(config, fileLength, 1, fp);
+    fclose(fp);
     json = json_tokener_parse(config);
     free(config);
     return json;
+}
+
+extern int writeConfig(struct json_object* config) {
+    wordexp_t configPath;
+    wordexp("~/.gitgh", &configPath, 0);
+    FILE *fp = fopen(configPath.we_wordv[0], "w");
+    wordfree(&configPath);
+    if (fp == NULL)
+        return 0;
+    fputs(json_object_get_string(config), fp);
+    fclose(fp);
+    return 1;
 }
