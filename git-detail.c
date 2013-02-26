@@ -19,9 +19,9 @@ void printComment(struct json_object* comment) {
 void printComments(char* repo, struct json_object* issue, const char* token) {
     struct json_object* response;
     const char* issue_id = getString(issue, "number");
-    int querylen = strlen(repo) + strlen(issue_id) + 24;
+    int querylen = strlen(repo) + strlen(issue_id) + 25;
     char query[querylen];
-    sprintf(query, "/repos/%s/issues/%s/comments", repo, issue_id);
+    snprintf(query, querylen, "/repos/%s/issues/%s/comments", repo, issue_id);
 
     response = makeRequest(query, token);
     int len = json_object_array_length(response);
@@ -78,9 +78,9 @@ int main(int argc, char *argv[]) {
     if (repo == NULL)
         return 1;
 
-    int querylen = 15 + strlen(issueid);
+    int querylen = 16 + strlen(issueid) + strlen(repo);
     char query[querylen];
-    sprintf(query, "/repos/%s/issues/%s", repo, issueid);
+    snprintf(query, querylen, "/repos/%s/issues/%s", repo, issueid);
     
     response = makeRequest(query, token);
     message = getString(response, "message");
