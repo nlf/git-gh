@@ -7,12 +7,12 @@ This branch is the C rewrite. Most of it does not work or doesn't exist. Don't u
 
 To install:
 
-First, install a compiler. You're on your own for that. Also, install libcurl, json-c, and iniparser C libraries.
+First, install a compiler. You're on your own for that. Also, install libcurl, json-c, and iniparser C libraries. They're in homebrew if you're on OSX.
 This currently assumes you already have a ~/.gitgh file created with your config in it. I don't know what will happen if you don't.
 
 ```
 make
-sudo make install // just kidding, there's no install, but the binaries will be in the "bin" directory
+sudo make install
 ```
 
 Commands
