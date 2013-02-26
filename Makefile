@@ -1,4 +1,4 @@
-OBJ = build/request.o build/config.o build/repo.o build/git-list.o build/git-detail.o
+OBJ = build/request.o build/config.o build/repo.o build/jsonhelpers.o build/git-list.o build/git-detail.o
 BIN = bin/git-list bin/git-detail
 CC = gcc
 CFLAGS = -ljson -lcurl -liniparser
@@ -14,6 +14,9 @@ build/config.o: lib/config.c lib/config.h
 build/repo.o: lib/repo.c lib/repo.h
 	$(CC) -c lib/repo.c -o build/repo.o
 
+build/jsonhelpers.o: lib/jsonhelpers.c lib/jsonhelpers.o
+	$(CC) -c lib/jsonhelpers.c -o build/jsonhelpers.o
+
 build/git-list.o: git-list.c
 	$(CC) -c git-list.c -o build/git-list.o
 
@@ -21,10 +24,10 @@ build/git-detail.o: git-detail.c
 	$(CC) -c git-detail.c -o build/git-detail.o
 
 bin/git-list: $(OBJ)
-	$(CC) build/git-list.o build/request.o build/config.o build/repo.o -o bin/git-list $(CFLAGS)
+	$(CC) build/git-list.o build/request.o build/config.o build/repo.o build/jsonhelpers.o -o bin/git-list $(CFLAGS)
 
 bin/git-detail: $(OBJ)
-	$(CC) build/git-detail.o build/request.o build/config.o build/repo.o -o bin/git-detail $(CFLAGS)
+	$(CC) build/git-detail.o build/request.o build/config.o build/repo.o build/jsonhelpers.o -o bin/git-detail $(CFLAGS)
 
 clean:
 	rm -rf $(OBJ)

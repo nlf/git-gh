@@ -5,6 +5,7 @@
 #include "lib/request.h"
 #include "lib/config.h"
 #include "lib/repo.h"
+#include "lib/jsonhelpers.h"
 
 int maxLine = 0;
 
@@ -14,13 +15,11 @@ void printIssueHeader() {
 }
 
 void printIssue(json_object* issue, bool bold, bool is_pr) {
-    struct json_object *title = NULL;
-    struct json_object *number = NULL;
-    struct json_object *milestone = NULL;
-    struct json_object *milestone_title = NULL;
-    struct json_object *assignee = NULL;
-    struct json_object *assignee_login = NULL;
-    struct json_object *comments = NULL;
+    const char* title = getString(issue, "title");
+    int number = getInt(issue, "number");
+    const char* milestone = getString(issue, "milestone.title");
+    const char* assignee = getString(issue, "assignee.login");
+    int comments = getInt(issue, "comments");
     char *boldstart = "\x1b[1m";
     char *boldend = "\x1b[0m";
     int formatlen;
@@ -42,25 +41,13 @@ void printIssue(json_object* issue, bool bold, bool is_pr) {
         sprintf(format, "%s\n", lineformat);
     }
 
-    title = json_object_object_get(issue, "title");
-    number = json_object_object_get(issue, "number");
-    comments = json_object_object_get(issue, "comments");
-    assignee = json_object_object_get(issue, "assignee");
-    if (assignee)
-        assignee_login = json_object_object_get(assignee, "login");
-    milestone = json_object_object_get(issue, "milestone");
-    if (milestone)
-        milestone_title = json_object_object_get(milestone, "title");
-
-    fprintf(stdout, format, json_object_get_int(number), json_object_get_string(title), json_object_get_string(assignee_login), json_object_get_string(milestone_title), json_object_get_int(comments));
+    fprintf(stdout, format, number, title, assignee, milestone, comments);
     free(format);
 }
 
 int findMilestone(char *search, char *repo, const char *token) {
     struct json_object* response;
     struct json_object* milestone;
-    struct json_object* titleobj;
-    struct json_object* numberobj;
     const char *title;
     int number = 0;
     char *path;
@@ -68,20 +55,16 @@ int findMilestone(char *search, char *repo, const char *token) {
     int i;
     int pathlen = strlen(repo) + 19;
     path = (char *)calloc(sizeof(char), pathlen);
-    strncpy(path, "/repos/", pathlen);
-    strncat(path, repo, pathlen);
-    strncat(path, "/milestones\0", pathlen);
+    sprintf(path, "/repos/%s/milestones", repo);
 
     response = makeRequest(path, token);
     len = json_object_array_length(response);
     if (len > 0) {
         for (i = 0; i < len; i++) {
             milestone = json_object_array_get_idx(response, i);
-            titleobj = json_object_object_get(milestone, "title");
-            title = json_object_get_string(titleobj);
+            title = getString(milestone, "title");
             if (strcasecmp(title, search) == 0) {
-                numberobj = json_object_object_get(milestone, "number");
-                number = json_object_get_int(numberobj);
+                number = getInt(milestone, "number");
                 break;
             }
         }
@@ -92,8 +75,6 @@ int findMilestone(char *search, char *repo, const char *token) {
 
 int main(int argc, char *argv[]) {
     struct json_object* config;
-    struct json_object* userobj;
-    struct json_object* tokenobj;
     struct json_object* response;
     struct json_object* issue;
     const char *user;
@@ -117,10 +98,8 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "You don't appear to have a ~/.gitgh config file\n");
         return 1;
     }
-    userobj = json_object_object_get(config, "user");
-    user = json_object_get_string(userobj);
-    tokenobj = json_object_object_get(config, "token");
-    token = json_object_get_string(tokenobj);
+    user = getString(config, "user");
+    token = getString(config, "token");
 
     repo = getRepo();
     if (repo == NULL)
@@ -161,7 +140,7 @@ int main(int argc, char *argv[]) {
         printIssueHeader();
         for (i = 0; i < len; i++) {
             issue = json_object_array_get_idx(response, i);
-            bool is_pull_request = json_object_get_string(json_object_object_get(json_object_object_get(issue, "pull_request"), "html_url")) != NULL;
+            bool is_pull_request = getString(issue, "pull_request.html_url") != NULL;
             bool valid = true;
             if (strcmp(filter, "prs") == 0 && !is_pull_request)
                 valid = false;
