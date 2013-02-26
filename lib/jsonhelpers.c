@@ -7,9 +7,9 @@ struct json_object* findObject(struct json_object* obj, char* path) {
     struct json_object* this_object;
     struct json_object* last_object;
     char* nextTok;
-    int pathlen = strlen(path);
+    int pathlen = strlen(path) + 1;
     char new_path[pathlen];
-    sprintf(new_path, "%s", path);
+    snprintf(new_path, pathlen, "%s", path);
     nextTok = strtok(new_path, ".");
     this_object = obj;
     do {

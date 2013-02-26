@@ -23,7 +23,7 @@ extern struct json_object* readConfig() {
 
     config = calloc(fileLength + 1, sizeof(char));
     if (config == NULL) {
-        printf("insufficient memory\n");
+        fprintf(stderr, "insufficient memory\n");
         return NULL;
     }
 

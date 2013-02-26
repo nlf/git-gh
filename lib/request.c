@@ -31,13 +31,15 @@ extern struct json_object *makeRequest(char *path, const char *token) {
     response = (struct json_object*)calloc(sizeof(struct json_object), 1);
     char *data;
     char *tokenHeader = "Authorization: token ";
-    char authHeader[strlen(tokenHeader) + strlen(token) + 1];
-    sprintf(authHeader, "%s%s", tokenHeader, token);
+    int headerlen = strlen(tokenHeader) + strlen(token) + 2;
+    char authHeader[headerlen];
+    snprintf(authHeader, headerlen, "%s%s", tokenHeader, token);
 
     data = (char *)calloc(sizeof(char), BUF_LEN);
 
-    char fullUrl[strlen(baseUrl) + strlen(path) + 1];
-    sprintf(fullUrl, "%s%s", baseUrl, path);
+    int urllen = strlen(baseUrl) + strlen(path) + 2;
+    char fullUrl[urllen];
+    snprintf(fullUrl, urllen, "%s%s", baseUrl, path);
 
     bytesWritten = 0;
 
