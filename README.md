@@ -1,16 +1,14 @@
 Github extensions for Git
 =======
 
-NOTE
-====
-This branch is the C rewrite. Most of it does not work or doesn't exist. Don't use it.
+This project hasn't been tested on anything other than OS X 10.8.2. Feel free to try it elsewhere and open an issue if it doesn't work.
 
 To install:
 
-First, install a compiler. You're on your own for that. Also, install libcurl, json-c, and iniparser C libraries. They're in homebrew if you're on OSX.
-This currently assumes you already have a ~/.gitgh file created with your config in it. I don't know what will happen if you don't.
+First, install a compiler. You're on your own for that. Also, install homebrew because it's the easiest way to get dependencies.
 
 ```
+brew install libcurl json-c iniparser
 make
 sudo make install
 ```
