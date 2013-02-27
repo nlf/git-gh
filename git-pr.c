@@ -27,6 +27,12 @@ int main(int argc, char *argv[]) {
             case 'm':
                 body = optarg;
                 break;
+            case 'b':
+                base = optarg;
+                break;
+            case 'h':
+                head = optarg;
+                break;
         }
     }
     if (title == NULL || body == NULL) {
