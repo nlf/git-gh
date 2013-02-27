@@ -54,3 +54,15 @@ git close <id>
 ```
 
 Close the issue/pull request. This will *not* merge a pull request.
+
+```
+git issue -t 'title for issue' -m 'body of issue'
+```
+
+Open a new issue with the given title and body.
+
+```
+git pr -t 'title for pull request' -m 'body of pull request' [-b base] [-h head]
+```
+
+Open a new pull request. The "base" parameter is the branch you'd like your branch to be merged into, while the "head" parameter is the branch that you would like to merge. If unspecified, base will be set to "master" and head will be set to the current branch.
