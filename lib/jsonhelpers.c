@@ -3,7 +3,7 @@
 #include <json/json.h>
 #include "jsonhelpers.h"
 
-struct json_object* findObject(struct json_object* obj, char* path) {
+extern struct json_object* jsonh_find_object(struct json_object* obj, char* path) {
     struct json_object* this_object;
     struct json_object* last_object;
     char* nextTok;
@@ -18,16 +18,14 @@ struct json_object* findObject(struct json_object* obj, char* path) {
     return this_object;
 }
 
-extern int getInt(struct json_object* obj, char* path) {
-    struct json_object* object = findObject(obj, path);
+extern int jsonh_get_int(struct json_object* obj, char* path) {
+    struct json_object* object = jsonh_find_object(obj, path);
     int i = json_object_get_int(object);
-    free(object);
     return i;
 }
 
-extern const char* getString(struct json_object* obj, char* path) {
-    struct json_object* object = findObject(obj, path);
+extern char* jsonh_get_string(struct json_object* obj, char* path) {
+    struct json_object* object = jsonh_find_object(obj, path);
     const char* str = json_object_get_string(object);
-    free(object);
-    return str;
+    return (char*)str;
 }

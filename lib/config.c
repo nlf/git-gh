@@ -5,7 +5,7 @@
 #include <json/json_object_private.h>
 #include "config.h"
 
-extern struct json_object* readConfig() {
+extern struct json_object* config_get_config() {
     int fileLength;
     char *config;
     struct json_object* json;
@@ -14,8 +14,10 @@ extern struct json_object* readConfig() {
     wordexp("~/.gitgh", &configPath, 0);
     FILE *fp = fopen(configPath.we_wordv[0], "r");
     wordfree(&configPath);
-    if (fp == NULL)
+    if (fp == NULL) {
+        printf("Invalid configuration found\nPlease run git ghsetup to create one\n");
         return NULL;
+    }
 
     fseek(fp, 0L, SEEK_END);
     fileLength = ftell(fp);
@@ -34,7 +36,25 @@ extern struct json_object* readConfig() {
     return json;
 }
 
-extern int writeConfig(struct json_object* config) {
+extern char* config_get_token() {
+    json_object* config = config_get_config();
+    json_object* token;
+    if (json_object_object_get_ex(config, "token", &token))
+        return (char *)json_object_get_string(token);
+    printf("Invalid configuration found\nPlease run git ghsetup to create one\n");
+    return NULL;
+}
+
+extern char* config_get_user() {
+    json_object* config = config_get_config();
+    json_object* user;
+    if (json_object_object_get_ex(config, "user", &user))
+        return (char *)json_object_get_string(user);
+    printf("Invalid configuration found\nPlease run git ghsetup to create one\n");
+    return NULL;
+}
+
+extern int config_write_config(struct json_object* config) {
     wordexp_t configPath;
     wordexp("~/.gitgh", &configPath, 0);
     FILE *fp = fopen(configPath.we_wordv[0], "w");
