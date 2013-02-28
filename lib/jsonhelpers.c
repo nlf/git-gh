@@ -6,10 +6,10 @@
 extern struct json_object* jsonh_find_object(struct json_object* obj, char* path) {
     struct json_object* this_object;
     char* token;
-    int path_len;
     char* new_path;
+
+    int path_len = strlen(path) + 1;
     
-    path_len = strlen(path) + 1;
     new_path = (char*)calloc(sizeof(char), path_len);
     snprintf(new_path, path_len, "%s", path);
 
@@ -24,19 +24,15 @@ extern struct json_object* jsonh_find_object(struct json_object* obj, char* path
 }
 
 extern int jsonh_get_int(struct json_object* obj, char* path) {
-    struct json_object* object;
-    int i;
+    struct json_object* object = jsonh_find_object(obj, path);
+    int i = json_object_get_int(object);
 
-    object = jsonh_find_object(obj, path);
-    i = json_object_get_int(object);
     return i;
 }
 
 extern char* jsonh_get_string(struct json_object* obj, char* path) {
-    struct json_object* object;
-    const char* str;
+    struct json_object* object = jsonh_find_object(obj, path);
+    const char* str = json_object_get_string(object);
 
-    object = jsonh_find_object(obj, path);
-    str = json_object_get_string(object);
     return (char*)str;
 }

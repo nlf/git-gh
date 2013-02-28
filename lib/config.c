@@ -40,21 +40,17 @@ extern struct json_object* config_get_config() {
 }
 
 extern char* config_get_token() {
-    struct json_object* config;
-    char* token;
+    struct json_object* config = config_get_config();
+    char* token = jsonh_get_string(config, "token");
 
-    config = config_get_config();
-    token = jsonh_get_string(config, "token");
     free(config);
     return token;
 }
 
 extern char* config_get_user() {
-    struct json_object* config;
-    char* user;
+    struct json_object* config = config_get_config();
+    char* user = jsonh_get_string(config, "user");
 
-    config = config_get_config();
-    user = jsonh_get_string(config, "user");
     free(config);
     return user;
 }

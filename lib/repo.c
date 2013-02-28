@@ -5,11 +5,9 @@
 
 void trim(char *str) {
     int i;
-    int begin;
-    int end;
 
-    begin = 0;
-    end = strlen(str) - 1;
+    int begin = 0;
+    int end = strlen(str) - 1;
 
     while (isspace(str[begin]))
         begin++;
@@ -21,32 +19,29 @@ void trim(char *str) {
 }
 
 extern char* repo_get_owner() {
-    char* repo;
+    char* repo = repo_get_repo();
 
-    repo = repo_get_repo();
     return strtok(repo, "/");
 }
 
 extern char* repo_get_name() {
-    char* repo;
-    char* name;
+    char* repo = repo_get_repo();
+    char* name = strchr(repo, '/');
 
-    repo = repo_get_repo();
-    name = strchr(repo, '/');
     name++;
     return name;
 }
 
 extern char* repo_get_repo() {
     dictionary *ini;
-    FILE *fp;
     char line[130];
     char *url;
     int repo_len;
     int start;
     char* repo;
 
-    fp = popen("git rev-parse --show-toplevel", "r");
+    FILE *fp = popen("git rev-parse --show-topelevel", "r");
+
     if (fgets(line, sizeof line, fp) != NULL) {
         trim(line);
         strlcat(line, "/.git/config", sizeof line);
@@ -73,15 +68,14 @@ extern char* repo_get_repo() {
 
 extern char* repo_get_branch() {
     char* branch;
-    FILE *fp;
     char line[130];
-    char* user;
     int branch_len;
 
-    fp = popen("git rev-parse --abbrev-ref HEAD", "r");
+    char* user = repo_get_owner();
+    FILE *fp = popen("git rev-parse --abbrev-ref HEAD", "r");
+
     if (fgets(line, sizeof line, fp) != NULL) {
         trim(line);
-        user = repo_get_owner();
         branch_len = strlen(user) + strlen(line) + 2;
         branch = (char*)calloc(sizeof(char), branch_len);
         snprintf(branch, branch_len, "%s:%s", user, line);
