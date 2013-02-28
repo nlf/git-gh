@@ -28,20 +28,20 @@ struct json_object* curl_request(char* path, char* auth_type, char* auth, char* 
     CURLcode res;
     char* buffer;
     char* full_url;
-    struct curl_slist* headers;
     char* auth_header;
     struct json_object* response;
     char* message;
 
     int full_url_len = strlen(base_url) + strlen(path) + 1;
     int auth_header_len = strlen(auth) + 22;
+    struct curl_slist* headers = NULL;
 
     bytes_written = 0;
 
     curl_global_init(CURL_GLOBAL_DEFAULT);
     curl = curl_easy_init();
     if (curl) {
-        buffer = (char*)calloc(sizeof(buffer), BUF_LEN);
+        buffer = (char*)calloc(sizeof(char), BUF_LEN);
 
         full_url = (char*)calloc(sizeof(char), full_url_len);
         snprintf(full_url, full_url_len, "%s%s", base_url, path);

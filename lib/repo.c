@@ -40,7 +40,7 @@ extern char* repo_get_repo() {
     int start;
     char* repo;
 
-    FILE *fp = popen("git rev-parse --show-topelevel", "r");
+    FILE *fp = popen("git rev-parse --show-toplevel", "r");
 
     if (fgets(line, sizeof line, fp) != NULL) {
         trim(line);
