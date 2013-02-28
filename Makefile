@@ -1,37 +1,28 @@
-LIB = lib/config.o lib/repo.o lib/jsonhelpers.o lib/github.o
-BIN = git-list git-detail git-ghsetup git-claim git-assign git-close git-issue git-pr
 CC = gcc
-LINKLIBS = -ljson -lcurl -liniparser
+PREFIX = /usr/local/bin
+LFLAGS = -ljson -lcurl -liniparser
+CFLAGS = -Wall -ansi -pedantic
+
+BIN = bin/git-assign bin/git-claim bin/git-close bin/git-comment bin/git-detail bin/git-ghsetup bin/git-issue bin/git-list bin/git-pr
+OBJ = lib/jsonhelpers.o lib/config.o lib/repo.o lib/github.o
 
 all: $(BIN)
 
-git-list: $(LIB) git-list.o
-	$(CC) git-list.o $(LIB) -o git-list $(LINKLIBS)
+bin/%: src/%.o $(OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ $(LFLAGS)
 
-git-detail: $(LIB) git-detail.o
-	$(CC) git-detail.o $(LIB) -o git-detail $(LINKLIBS)
+src/%.o: src/%.c
+	$(CC) $(CFLAGS) -c $^ -o $@
 
-git-ghsetup: $(LIB) git-ghsetup.o
-	$(CC) git-ghsetup.o $(LIB) -o git-ghsetup $(LINKLIBS)
+lib/%.o: lib/%.c
+	$(CC) $(CFLAGS) -c $^ -o $@
 
-git-claim: $(LIB) git-claim.o
-	$(CC) git-claim.o $(LIB) -o git-claim $(LINKLIBS)
-
-git-assign: $(LIB) git-assign.o
-	$(CC) git-assign.o $(LIB) -o git-assign $(LINKLIBS)
-
-git-close: $(LIB) git-close.o
-	$(CC) git-close.o $(LIB) -o git-close $(LINKLIBS)
-
-git-issue: $(LIB) git-issue.o
-	$(CC) git-issue.o $(LIB) -o git-issue $(LINKLIBS)
-
-git-pr: $(LIB) git-pr.o
-	$(CC) git-pr.o $(LIB) -o git-pr $(LINKLIBS)
+install:
+	install -m 0755 $(BIN) $(PREFIX)
 
 clean:
-	rm -rf *.o
+	find . -name '*.o' -exec rm {} \;
 	rm -f $(BIN)
 
-install: $(BIN)
-	install $(BIN) /usr/local/bin/
+.SECONDARY: $(wildcard src/*.o) $(wildcard lib/*.o)
+.PHONY: clean all

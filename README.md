@@ -54,6 +54,12 @@ git close <id>
 Close the issue/pull request. This will *not* merge a pull request.
 
 ```
+git comment <id> -m 'comment body'
+```
+
+Add a comment to the issue.
+
+```
 git issue -t 'title for issue' -m 'body of issue'
 ```
 
