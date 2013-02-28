@@ -1,9 +1,2 @@
 *.o
-git-list
-git-detail
-git-ghsetup
-git-claim
-git-assign
-git-close
-git-issue
-git-pr
+bin/*
