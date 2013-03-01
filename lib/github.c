@@ -89,7 +89,7 @@ struct json_object* curl_request(char* path, char* auth_type, char* auth, char* 
     free(buffer);
     message = jsonh_get_string(response, "message");
     merged = jsonh_get_string(response, "merged");
-    if (message && !merged) {
+    if (message && (!merged || strcasecmp(merged, "true") != 0)) {
         fprintf(stderr, "Error: %s\n", message);
         return NULL;
     }
