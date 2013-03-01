@@ -242,7 +242,7 @@ extern struct json_object* github_merge_pr(char* repo, char* issue, char* token)
     query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/pulls/%s/merge", repo, issue);
 
-    response = curl_request(query, "token", token, "PUT", NULL);
+    response = curl_request(query, "token", token, "PUT", "{}");
     free(query);
     return response;
 }
