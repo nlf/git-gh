@@ -74,6 +74,7 @@ extern char* curl_raw_request(char* url, char* auth_type, char* auth, char* meth
 struct json_object* curl_request(char* path, char* auth_type, char* auth, char* method, const char* body) {
     struct json_object* response;
     char* message;
+    char* merged;
     char* buffer;
     char* full_url;
 
@@ -87,7 +88,8 @@ struct json_object* curl_request(char* path, char* auth_type, char* auth, char* 
     response = json_tokener_parse(buffer);
     free(buffer);
     message = jsonh_get_string(response, "message");
-    if (message) {
+    merged = jsonh_get_string(response, "merged");
+    if (message && (!merged || strcasecmp(merged, "true") != 0)) {
         fprintf(stderr, "Error: %s\n", message);
         return NULL;
     }
