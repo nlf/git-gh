@@ -70,3 +70,15 @@ git pr -t 'title for pull request' -m 'body of pull request' [-b base] [-h head]
 ```
 
 Open a new pull request. The "base" parameter is the branch you'd like your branch to be merged into, while the "head" parameter is the branch that you would like to merge. If unspecified, base will be set to "master" and head will be set to the current branch.
+
+```
+git review <id>
+```
+
+Review a diff for a pull request
+
+```
+git accept <id>
+```
+
+Merge a pull request
