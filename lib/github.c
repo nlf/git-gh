@@ -237,7 +237,7 @@ extern struct json_object* github_merge_pr(char* repo, char* issue, char* token)
     char* query;
     struct json_object* response;
 
-    int query_len = strlen(repo) + strlen(issue) + 21;
+    int query_len = strlen(repo) + strlen(issue) + 22;
 
     query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/pulls/%s/merge", repo, issue);
