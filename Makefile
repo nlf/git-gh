@@ -1,7 +1,7 @@
 CC = gcc
 PREFIX = /usr/local/bin
 LFLAGS = -ljson -lcurl -liniparser
-CFLAGS = -Wall -ansi -pedantic
+CFLAGS = -Wall -ansi -pedantic -O2
 
 BIN = bin/git-assign bin/git-claim bin/git-close bin/git-comment bin/git-detail bin/git-ghsetup bin/git-issue bin/git-list bin/git-pr
 OBJ = lib/jsonhelpers.o lib/config.o lib/repo.o lib/github.o
