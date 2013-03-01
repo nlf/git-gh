@@ -10,7 +10,7 @@ extern struct json_object* jsonh_find_object(struct json_object* obj, char* path
 
     int path_len = strlen(path) + 1;
     
-    new_path = (char*)calloc(sizeof(char), path_len);
+    new_path = calloc(path_len, sizeof(char));
     snprintf(new_path, path_len, "%s", path);
 
     token = strtok(new_path, ".");

@@ -56,7 +56,7 @@ extern char* repo_get_repo() {
                     repo_len = strlen(url) - 23;
                     start = 19;
                 }
-                repo = (char*)calloc(repo_len, sizeof(char));
+                repo = calloc(repo_len, sizeof(char));
                 strncpy(repo, &url[start], repo_len);
                 return repo;
             }
@@ -77,7 +77,7 @@ extern char* repo_get_branch() {
     if (fgets(line, sizeof line, fp) != NULL) {
         trim(line);
         branch_len = strlen(user) + strlen(line) + 2;
-        branch = (char*)calloc(sizeof(char), branch_len);
+        branch = calloc(branch_len, sizeof(char));
         snprintf(branch, branch_len, "%s:%s", user, line);
     }
     return branch;

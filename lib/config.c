@@ -13,7 +13,7 @@ extern struct json_object* config_get_config() {
     FILE* fp;
     wordexp_t config_path;
 
-    json = (struct json_object*)calloc(sizeof(struct json_object), 1);
+    json = calloc(1, sizeof(struct json_object));
     wordexp("~/.gitgh", &config_path, 0);
     fp = fopen(config_path.we_wordv[0], "r");
     wordfree(&config_path);
@@ -26,7 +26,7 @@ extern struct json_object* config_get_config() {
     file_length = ftell(fp);
     rewind(fp);
 
-    config = (char*)calloc(sizeof(char), file_length + 1);
+    config = calloc(file_length + 1, sizeof(char));
     if (config == NULL) {
         fprintf(stderr, "insufficient memory\n");
         return NULL;

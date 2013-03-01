@@ -41,9 +41,9 @@ struct json_object* curl_request(char* path, char* auth_type, char* auth, char* 
     curl_global_init(CURL_GLOBAL_DEFAULT);
     curl = curl_easy_init();
     if (curl) {
-        buffer = (char*)calloc(sizeof(char), BUF_LEN);
+        buffer = calloc(BUF_LEN, sizeof(char));
 
-        full_url = (char*)calloc(sizeof(char), full_url_len);
+        full_url = calloc(full_url_len, sizeof(char));
         snprintf(full_url, full_url_len, "%s%s", base_url, path);
 
         headers = curl_slist_append(headers, "Accept: application/json");
@@ -52,7 +52,7 @@ struct json_object* curl_request(char* path, char* auth_type, char* auth, char* 
             curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             curl_easy_setopt(curl, CURLOPT_USERPWD, auth);
         } else if (strcasecmp(auth_type, "token") == 0) {
-            auth_header = (char*)calloc(sizeof(char), auth_header_len);
+            auth_header = calloc(auth_header_len, sizeof(char));
             snprintf(auth_header, auth_header_len, "Authorization: token %s", auth);
             headers = curl_slist_append(headers, auth_header);
         }
@@ -97,7 +97,7 @@ extern char* github_find_milestone(char* repo, char* milestone, char* token) {
 
     int query_len = strlen(repo) + 19;
 
-    query = (char*)calloc(sizeof(char), query_len);
+    query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/milestones", repo);
 
     response = curl_request(query, "token", token, "GET", NULL);
@@ -127,11 +127,11 @@ extern struct json_object* github_get_issues(char* repo, char* filter, char* mil
 
     if (strcasecmp(filter, "mine") == 0) {
         query_len += (strlen(user) + 10);
-        query = (char*)calloc(sizeof(char), query_len);
+        query = calloc(query_len, sizeof(char));
         snprintf(query, query_len, "/repos/%s/issues?assignee=%s", repo, user);
     } else if (strcasecmp(filter, "unassigned") == 0) {
         query_len += 20;
-        query = (char*)calloc(sizeof(char), query_len);
+        query = calloc(query_len, sizeof(char));
         snprintf(query, query_len, "/repos/%s/issues?assignee=none", repo);
     } else if (strcasecmp(filter, "milestone") == 0) {
         milestone_id = github_find_milestone(repo, milestone, token);
@@ -140,10 +140,10 @@ extern struct json_object* github_get_issues(char* repo, char* filter, char* mil
             return NULL;
         }
         query_len += (strlen(milestone_id) + 18);
-        query = (char*)calloc(sizeof(char), query_len);
+        query = calloc(query_len, sizeof(char));
         snprintf(query, query_len, "/repos/%s/issues?milestone=%s", repo, milestone_id);
     } else {
-        query = (char*)calloc(sizeof(char), query_len);
+        query = calloc(query_len, sizeof(char));
         snprintf(query, query_len, "/repos/%s/issues", repo);
     }
 
@@ -172,7 +172,7 @@ extern struct json_object* github_get_issue(char* repo, char* issue, char* token
 
     int query_len = strlen(repo) + strlen(issue) + 16;
 
-    query = (char*)calloc(sizeof(char), query_len);
+    query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues/%s", repo, issue);
 
     response = curl_request(query, "token", token, "GET", NULL);
@@ -187,7 +187,7 @@ extern struct json_object* github_edit_issue(char* repo, char* issue, struct jso
     const char* payload = json_object_get_string(edit);
     int query_len = strlen(repo) + strlen(issue) + 16;
 
-    query = (char*)calloc(sizeof(char), query_len);
+    query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues/%s", repo, issue);
 
     response = curl_request(query, "token", token, "PATCH", payload);
@@ -202,7 +202,7 @@ extern struct json_object* github_create_issue(char* repo, struct json_object* i
     const char* payload = json_object_get_string(issue);
     int query_len = strlen(repo) + 15;
 
-    query = (char*)calloc(sizeof(char), query_len);
+    query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues", repo);
 
     response = curl_request(query, "token", token, "POST", payload);
@@ -217,7 +217,7 @@ extern struct json_object* github_create_pr(char* repo, struct json_object* pr, 
     const char* payload = json_object_get_string(pr);
     int query_len = strlen(repo) + 14;
 
-    query = (char*)calloc(sizeof(char), query_len);
+    query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/pulls", repo);
 
     response = curl_request(query, "token", token, "POST", payload);
@@ -231,7 +231,7 @@ extern struct json_object* github_get_comments(char* repo, char* issue, char* to
 
     int query_len = strlen(repo) + strlen(issue) + 25;
 
-    query = (char*)calloc(sizeof(char), query_len);
+    query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues/%s/comments", repo, issue);
 
     response = curl_request(query, "token", token, "GET", NULL);
@@ -245,7 +245,7 @@ extern struct json_object* github_get_comment(char* repo, char* comment, char* t
 
     int query_len = strlen(repo) + strlen(comment) + 25;
 
-    query = (char*)calloc(sizeof(char), query_len);
+    query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues/comments/%s", repo, comment);
 
     response = curl_request(query, "token", token, "GET", NULL);
@@ -260,7 +260,7 @@ extern struct json_object* github_edit_comment(char* repo, char* comment, struct
     const char* payload = json_object_get_string(edit);
     int query_len = strlen(repo) + strlen(comment) + 25;
 
-    query = (char*)calloc(sizeof(char), query_len);
+    query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues/comments/%s", repo, comment);
 
     response = curl_request(query, "token", token, "PATCH", payload);
@@ -274,7 +274,7 @@ extern struct json_object* github_del_comment(char* repo, char* comment, char* t
 
     int query_len = strlen(repo) + strlen(comment) + 25;
 
-    query = (char*)calloc(sizeof(char), query_len);
+    query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues/comments/%s", repo, comment);
 
     response = curl_request(query, "token", token, "DELETE", NULL);
@@ -289,7 +289,7 @@ extern struct json_object* github_create_comment(char* repo, char* issue, struct
     const char* payload = json_object_get_string(comment);
     int query_len = strlen(repo) + strlen(issue) + 25;
 
-    query = (char*)calloc(sizeof(char), query_len);
+    query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues/%s/comments", repo, issue);
 
     response = curl_request(query, "token", token, "POST", payload);
@@ -305,7 +305,7 @@ extern struct json_object* github_create_token(char* user, char* pass) {
     int auth_len = strlen(user) + strlen(pass) + 2;
     struct json_object* config = json_object_new_object();
 
-    auth = (char*)calloc(sizeof(char), auth_len);
+    auth = calloc(auth_len, sizeof(char));
     snprintf(auth, auth_len, "%s:%s", user, pass);
 
     response = curl_request("/authorizations", "basic", auth, "POST", payload);

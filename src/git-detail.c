@@ -15,7 +15,7 @@ char* bold(char* str) {
     char* boldend = "\x1b[0m";
 
     str_len = strlen(boldstart) + strlen(boldend) + strlen(str) + 1;
-    newstr = (char*)calloc(sizeof(char), str_len);;
+    newstr = calloc(str_len, sizeof(char));
     snprintf(newstr, str_len, "%s%s%s", boldstart, str, boldend);
     return newstr;
 }
