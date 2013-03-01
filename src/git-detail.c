@@ -59,11 +59,10 @@ int main(int argc, char *argv[]) {
     char* issueid;
     struct json_object* issue;
 
-    char* user = config_get_user();
     char* token = config_get_token();
     char* repo = repo_get_repo();
 
-    if (user == NULL || token == NULL || repo == NULL)
+    if (token == NULL || repo == NULL)
         return 1;
 
     if (argc <= 1) {

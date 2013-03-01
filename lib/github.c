@@ -9,7 +9,6 @@
 #define BUF_LEN 1024*1024
 
 long bytes_written = 0;
-char* base_url = "https://api.github.com";
 
 static int curl_write(void* buf, size_t len, size_t size, void *userdata) {
     size_t requested_len = len * size;
@@ -23,16 +22,12 @@ static int curl_write(void* buf, size_t len, size_t size, void *userdata) {
     return requested_len;
 }
 
-struct json_object* curl_request(char* path, char* auth_type, char* auth, char* method, const char* body) {
+extern char* curl_raw_request(char* url, char* auth_type, char* auth, char* method, const char* body) {
     CURL* curl;
     CURLcode res;
     char* buffer;
-    char* full_url;
     char* auth_header;
-    struct json_object* response;
-    char* message;
 
-    int full_url_len = strlen(base_url) + strlen(path) + 1;
     int auth_header_len = strlen(auth) + 22;
     struct curl_slist* headers = NULL;
 
@@ -42,9 +37,6 @@ struct json_object* curl_request(char* path, char* auth_type, char* auth, char* 
     curl = curl_easy_init();
     if (curl) {
         buffer = calloc(BUF_LEN, sizeof(char));
-
-        full_url = calloc(full_url_len, sizeof(char));
-        snprintf(full_url, full_url_len, "%s%s", base_url, path);
 
         headers = curl_slist_append(headers, "Accept: application/json");
         headers = curl_slist_append(headers, "Content-Type: application/json");
@@ -57,7 +49,7 @@ struct json_object* curl_request(char* path, char* auth_type, char* auth, char* 
             headers = curl_slist_append(headers, auth_header);
         }
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_URL, full_url);
+        curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_write);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
@@ -69,21 +61,37 @@ struct json_object* curl_request(char* path, char* auth_type, char* auth, char* 
         curl_easy_cleanup(curl);
         curl_global_cleanup();
         if (res != CURLE_OK) {
-            free(buffer);
+            fprintf(stderr, "Error: %s\n", curl_easy_strerror(res));
             return NULL;
         }
-        response = json_tokener_parse(buffer);
-        free(buffer);
-        message = jsonh_get_string(response, "message");
-        if (message) {
-            fprintf(stderr, "Error: %s\n", message);
-            return NULL;
-        }
-        return response;
+        return buffer;
     } else {
         curl_global_cleanup();
         return NULL;
     }
+}
+
+struct json_object* curl_request(char* path, char* auth_type, char* auth, char* method, const char* body) {
+    struct json_object* response;
+    char* message;
+    char* buffer;
+    char* full_url;
+
+    char* base_url = "https://api.github.com";
+    int full_url_len = strlen(base_url) + strlen(path) + 1;
+
+    full_url = calloc(full_url_len, sizeof(char));
+    snprintf(full_url, full_url_len, "%s%s", base_url, path);
+
+    buffer = curl_raw_request(full_url, auth_type, auth, method, body);
+    response = json_tokener_parse(buffer);
+    free(buffer);
+    message = jsonh_get_string(response, "message");
+    if (message) {
+        fprintf(stderr, "Error: %s\n", message);
+        return NULL;
+    }
+    return response;
 }
 
 extern char* github_find_milestone(char* repo, char* milestone, char* token) {
@@ -221,6 +229,20 @@ extern struct json_object* github_create_pr(char* repo, struct json_object* pr, 
     snprintf(query, query_len, "/repos/%s/pulls", repo);
 
     response = curl_request(query, "token", token, "POST", payload);
+    free(query);
+    return response;
+}
+
+extern struct json_object* github_merge_pr(char* repo, char* issue, char* token) {
+    char* query;
+    struct json_object* response;
+
+    int query_len = strlen(repo) + strlen(issue) + 21;
+
+    query = calloc(query_len, sizeof(char));
+    snprintf(query, query_len, "/repos/%s/pulls/%s/merge", repo, issue);
+
+    response = curl_request(query, "token", token, "PUT", NULL);
     free(query);
     return response;
 }
