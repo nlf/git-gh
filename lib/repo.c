@@ -35,6 +35,8 @@ extern char* repo_get_name() {
 extern char* repo_get_repo() {
     dictionary *ini;
     char line[130];
+    int path_len;
+    char *path;
     char *url;
     int repo_len;
     int start;
@@ -44,8 +46,10 @@ extern char* repo_get_repo() {
 
     if (fgets(line, sizeof line, fp) != NULL) {
         trim(line);
-        snprintf(line, sizeof line, "%s/.git/config", line);
-        ini = iniparser_load(line);
+        path_len = strlen(line) + 13;
+        path = calloc(path_len, sizeof(char));
+        snprintf(path, path_len, "%s/.git/config", line);
+        ini = iniparser_load(path);
         if (ini) {
             url = iniparser_getstring(ini, "remote \"origin\":url", NULL);
             if (url) {
