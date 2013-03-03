@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include <json.h>
+#include <json/json.h>
 #include "jsonhelpers.h"
 
 extern struct json_object* jsonh_find_object(struct json_object* obj, char* path) {
@@ -17,7 +17,7 @@ extern struct json_object* jsonh_find_object(struct json_object* obj, char* path
     this_object = obj;
     do {
         this_object = json_object_object_get(this_object, token);
-    } while ((token = strtok(NULL, ".")) && this_object);
+    } while ((token = strtok(NULL, ".")));
 
     free(new_path);
     return this_object;

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <json.h>
+#include <json/json.h>
 #include "../lib/config.h"
 #include "../lib/jsonhelpers.h"
 #include "../lib/github.h"

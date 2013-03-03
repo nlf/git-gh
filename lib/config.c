@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <wordexp.h>
-#include <json.h>
-#include <json_object_private.h>
+#include <json/json.h>
+#include <json/json_object_private.h>
 #include "config.h"
 #include "jsonhelpers.h"
 
