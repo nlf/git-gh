@@ -44,7 +44,7 @@ extern char* repo_get_repo() {
 
     if (fgets(line, sizeof line, fp) != NULL) {
         trim(line);
-        strlcat(line, "/.git/config", sizeof line);
+        snprintf(line, sizeof line, "%s/.git/config", line);
         ini = iniparser_load(line);
         if (ini) {
             url = iniparser_getstring(ini, "remote \"origin\":url", NULL);
