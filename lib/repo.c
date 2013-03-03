@@ -50,6 +50,7 @@ extern char* repo_get_repo() {
         path = calloc(path_len, sizeof(char));
         snprintf(path, path_len, "%s/.git/config", line);
         ini = iniparser_load(path);
+        free(path);
         if (ini) {
             url = iniparser_getstring(ini, "remote \"origin\":url", NULL);
             if (url) {
