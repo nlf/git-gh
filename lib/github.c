@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <curl/curl.h>
-#include <json/json.h>
+#include <json.h>
 #include "github.h"
 #include "jsonhelpers.h"
 

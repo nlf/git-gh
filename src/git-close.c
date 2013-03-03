@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include <json/json.h>
+#include <json.h>
 #include "../lib/config.h"
 #include "../lib/repo.h"
 #include "../lib/jsonhelpers.h"
