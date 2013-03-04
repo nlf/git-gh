@@ -5,8 +5,8 @@ This project hasn't been tested on anything other than OS X 10.8.2. Feel free to
 
 Requirements
 ============
-* json-c >= 0.10
-* iniparser >= 3.1
+* json-c == 0.10
+* iniparser == 3.1
 * libcurl >= 1.4
 
 Installation on OSX
@@ -25,20 +25,19 @@ sudo make install
 Installation on Ubuntu
 ======================
 ```
-git clone http://github.com/ndevilla/iniparser.git
+wget http://ndevilla.free.fr/iniparser/iniparser-3.1.tar.gz
+tar xf iniparser-3.1.tar.gz
 cd iniparser
 make
 sudo cp libiniparser* /usr/lib
 sudo cp src/*.h /usr/include
 
-git clone http://github.com/json-c/json-c.git
-cd json-c
-sh autogen.sh
+wget https://github.com/downloads/json-c/json-c/json-c-0.10.tar.gz
+tar xf json-c-0.10.tar.gz
+cd json-c-0.10
 ./configure
 make
 sudo make install
-
-sudo apt-get install libjson0-dev
 
 git clone git://github.com/nathan-lafreniere/git-gh.git
 cd git-gh
