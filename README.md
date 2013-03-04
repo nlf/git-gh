@@ -3,6 +3,12 @@ Github extensions for Git
 
 This project hasn't been tested on anything other than OS X 10.8.2. Feel free to try it elsewhere and open an issue if it doesn't work.
 
+Requirements
+============
+* json-c >= 0.10
+* iniparser >= 3.1
+* libcurl >= 1.4
+
 Installation on OSX
 ===================
 
@@ -24,6 +30,14 @@ cd iniparser
 make
 sudo cp libiniparser* /usr/lib
 sudo cp src/*.h /usr/include
+
+git clone http://github.com/json-c/json-c.git
+cd json-c
+sh autogen.sh
+./configure
+make
+sudo make install
+
 sudo apt-get install libjson0-dev
 
 git clone git://github.com/nathan-lafreniere/git-gh.git
