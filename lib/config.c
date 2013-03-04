@@ -9,11 +9,11 @@
 extern struct json_object* config_get_config() {
     int file_length;
     char* config;
-    struct json_object* json;
     FILE* fp;
     wordexp_t config_path;
 
-    json = calloc(1, sizeof(struct json_object));
+    struct json_object* json = NULL;
+
     wordexp("~/.gitgh", &config_path, 0);
     fp = fopen(config_path.we_wordv[0], "r");
     wordfree(&config_path);
@@ -32,9 +32,12 @@ extern struct json_object* config_get_config() {
         return NULL;
     }
 
-    fread(config, file_length, 1, fp);
+    if (fread(config, file_length, 1, fp)) {
+        json = calloc(1, sizeof(struct json_object));
+        json = json_tokener_parse(config);
+    }
+
     fclose(fp);
-    json = json_tokener_parse(config);
     free(config);
     return json;
 }

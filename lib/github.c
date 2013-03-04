@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 #include <stdbool.h>
 #include <curl/curl.h>
 #include <json/json.h>
@@ -10,7 +11,7 @@
 
 long bytes_written = 0;
 
-static int curl_write(void* buf, size_t len, size_t size, void *userdata) {
+static size_t curl_write(void* buf, size_t len, size_t size, void *userdata) {
     size_t requested_len = len * size;
    
     if (requested_len) {
@@ -103,8 +104,8 @@ extern char* github_find_milestone(char* repo, char* milestone, char* token) {
     char* milestone_title;
     int array_len;
     int i;
-    char* number;
 
+    char* number = NULL;
     int query_len = strlen(repo) + 19;
 
     query = calloc(query_len, sizeof(char));

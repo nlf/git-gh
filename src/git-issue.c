@@ -10,10 +10,10 @@
 int main(int argc, char *argv[]) {
     int c;
     extern char* optarg;
-    char* title;
-    char* body;
     struct json_object* response;
 
+    char* title = NULL;
+    char* body = NULL;
     char* token = config_get_token();
     char* repo = repo_get_repo();
     struct json_object* issue = json_object_new_object();

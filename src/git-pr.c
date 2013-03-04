@@ -9,11 +9,11 @@
 
 int main(int argc, char *argv[]) {
     int c;
-    char* title;
-    char* body;
     extern char* optarg;
     struct json_object* response;
 
+    char* title = NULL;
+    char* body = NULL;
     char* token = config_get_token();
     char* repo = repo_get_repo();
     char* base = "master";

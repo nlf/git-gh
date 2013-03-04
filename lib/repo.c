@@ -38,10 +38,10 @@ extern char* repo_get_repo() {
     int path_len;
     char *path;
     char *url;
-    int repo_len;
-    int start;
     char* repo;
 
+    int repo_len = 0;
+    int start = 0;
     FILE *fp = popen("git rev-parse --show-toplevel", "r");
 
     if (fgets(line, sizeof line, fp) != NULL) {
@@ -77,10 +77,10 @@ extern char* repo_get_repo() {
 }
 
 extern char* repo_get_branch() {
-    char* branch;
     char line[130];
     int branch_len;
 
+    char* branch = NULL;
     char* user = repo_get_owner();
     FILE *fp = popen("git rev-parse --abbrev-ref HEAD", "r");
 

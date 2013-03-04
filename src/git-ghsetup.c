@@ -17,12 +17,18 @@ int main() {
 
     user = calloc(128, sizeof(char));
     printf("Enter your github username: ");
-    fgets(user, 128, stdin);
-    userlen = strlen(user) - 1;
-    if (user[userlen] == '\n') user[userlen] = '\0';
+    if (fgets(user, 128, stdin)) {
+        userlen = strlen(user) - 1;
+        if (user[userlen] == '\n') user[userlen] = '\0';
+    }
 
     pass = calloc(128, sizeof(char));
     pass = getpass("Enter your github password: ");
+
+    if (user == NULL || pass == NULL) {
+        fprintf(stderr, "You must enter both username and password to continue\n");
+        return 1;
+    }
 
     response = github_create_token(user, pass);
     if (!response)
