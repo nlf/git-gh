@@ -55,18 +55,18 @@ extern char* repo_get_repo() {
             url = iniparser_getstring(ini, "remote \"origin\":url", NULL);
             if (url) {
                 if (strncmp(url, "git@github.com:", 15) == 0) {
-                    repo_len = strlen(url) - 19;
+                    repo_len = strlen(url) - 18;
                     start = 15;
                 } else if (strncmp(url, "git://github.com/", 17) == 0) {
-                    repo_len = strlen(url) - 21;
+                    repo_len = strlen(url) - 20;
                     start = 17;
                 } else if (strncmp(url, "https://github.com/", 19) == 0) {
-                    repo_len = strlen(url) - 23;
+                    repo_len = strlen(url) - 22;
                     start = 19;
                 }
                 if (start) {
                     repo = calloc(repo_len, sizeof(char));
-                    strncpy(repo, &url[start], repo_len);
+                    snprintf(repo, repo_len, "%s", &url[start]);
                     return repo;
                 }
             }
