@@ -3,12 +3,15 @@ Github extensions for Git
 
 This project hasn't been tested on anything other than OS X 10.8.2. Feel free to try it elsewhere and open an issue if it doesn't work.
 
-To install:
+Installation on OSX
+===================
 
 First, install a compiler. You're on your own for that. Also, install homebrew because it's the easiest way to get dependencies.
 
 ```
 brew install libcurl json-c iniparser
+git clone git://github.com/nathan-lafreniere/git-gh.git
+cd git-gh
 make
 sudo make install
 ```
