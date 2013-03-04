@@ -13,6 +13,22 @@ make
 sudo make install
 ```
 
+Installation on Ubuntu
+======================
+```
+git clone http://github.com/ndevilla/iniparser.git
+cd iniparser
+make
+sudo cp libiniparser* /usr/lib
+sudo cp src/*.h /usr/include
+sudo apt-get install libjson0-dev
+
+git clone git://github.com/nathan-lafreniere/git-gh.git
+cd git-gh
+make
+sudo make install
+```
+
 Commands
 ========
 
