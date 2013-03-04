@@ -57,13 +57,18 @@ extern char* repo_get_repo() {
                 if (strncmp(url, "git@github.com:", 15) == 0) {
                     repo_len = strlen(url) - 19;
                     start = 15;
+                } else if (strncmp(url, "git://github.com/", 17) == 0) {
+                    repo_len = strlen(url) - 21;
+                    start = 17;
                 } else if (strncmp(url, "https://github.com/", 19) == 0) {
                     repo_len = strlen(url) - 23;
                     start = 19;
                 }
-                repo = calloc(repo_len, sizeof(char));
-                strncpy(repo, &url[start], repo_len);
-                return repo;
+                if (start) {
+                    repo = calloc(repo_len, sizeof(char));
+                    strncpy(repo, &url[start], repo_len);
+                    return repo;
+                }
             }
         }
     }
