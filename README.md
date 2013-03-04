@@ -38,6 +38,7 @@ cd json-c-0.10
 ./configure
 make
 sudo make install
+sudo cp json_object_iterator.h /usr/local/include/json/      *NOTE* this file gets missed by make install, so you must copy it manually
 
 git clone git://github.com/nathan-lafreniere/git-gh.git
 cd git-gh
