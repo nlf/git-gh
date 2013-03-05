@@ -1,7 +1,7 @@
 Github extensions for Git
 =======
 
-This project hasn't been tested on anything other than OS X 10.8.2. Feel free to try it elsewhere and open an issue if it doesn't work.
+This project has been tested on OSX 10.8.2, Debian 6, and Ubuntu 12.10.
 
 Requirements
 ============
@@ -15,7 +15,7 @@ Installation on OSX
 First, install a compiler. You're on your own for that. Also, install homebrew because it's the easiest way to get dependencies.
 
 ```
-brew install libcurl json-c iniparser
+brew install json-c iniparser
 git clone git://github.com/nathan-lafreniere/git-gh.git
 cd git-gh
 make
@@ -39,6 +39,8 @@ cd json-c-0.10
 make
 sudo make install
 sudo cp json_object_iterator.h /usr/local/include/json/      *NOTE* this file gets missed by make install, so you must copy it manually
+
+sudo apt-get install libcurl4-openssl-dev
 
 git clone git://github.com/nathan-lafreniere/git-gh.git
 cd git-gh
