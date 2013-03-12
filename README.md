@@ -16,7 +16,7 @@ First, install a compiler. You're on your own for that. Also, install homebrew b
 
 ```
 brew install json-c iniparser
-git clone git://github.com/nathan-lafreniere/git-gh.git
+git clone git://github.com/nlf/git-gh.git
 cd git-gh
 make
 sudo make install
@@ -42,7 +42,7 @@ sudo cp json_object_iterator.h /usr/local/include/json/      *NOTE* this file ge
 
 sudo apt-get install libcurl4-openssl-dev
 
-git clone git://github.com/nathan-lafreniere/git-gh.git
+git clone git://github.com/nlf/git-gh.git
 cd git-gh
 make
 sudo make install
