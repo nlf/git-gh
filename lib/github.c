@@ -41,6 +41,7 @@ extern char* curl_raw_request(char* url, char* auth_type, char* auth, char* meth
 
         headers = curl_slist_append(headers, "Accept: application/json");
         headers = curl_slist_append(headers, "Content-Type: application/json");
+        headers = curl_slist_append(headers, "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.65 Safari/537.31");
         if (strcasecmp(auth_type, "basic") == 0) {
             curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             curl_easy_setopt(curl, CURLOPT_USERPWD, auth);
