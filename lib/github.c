@@ -41,6 +41,7 @@ extern char* curl_raw_request(char* url, char* auth_type, char* auth, char* meth
 
         headers = curl_slist_append(headers, "Accept: application/json");
         headers = curl_slist_append(headers, "Content-Type: application/json");
+        headers = curl_slist_append(headers, "User-Agent: git-gh");
         if (strcasecmp(auth_type, "basic") == 0) {
             curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             curl_easy_setopt(curl, CURLOPT_USERPWD, auth);
