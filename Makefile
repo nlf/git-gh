@@ -1,6 +1,6 @@
 CC = gcc
 PREFIX = /usr/local/bin
-LFLAGS = -ljson -lcurl -liniparser
+LFLAGS = -ljson-c -lcurl -liniparser
 CFLAGS = -Wall -O2 -std=gnu99
 
 BIN = bin/git-accept bin/git-assign bin/git-claim bin/git-close \
