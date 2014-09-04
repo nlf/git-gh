@@ -23,7 +23,7 @@ static size_t curl_write(void* buf, size_t len, size_t size, void *userdata) {
     return requested_len;
 }
 
-extern char* curl_raw_request(char* url, char* auth_type, char* auth, char* method, const char* body) {
+extern char* curl_raw_request(char* url, char* auth_type, char* auth, char* method, const char* body, char* token) {
     CURL* curl;
     CURLcode res;
     char* buffer;
@@ -45,6 +45,12 @@ extern char* curl_raw_request(char* url, char* auth_type, char* auth, char* meth
         if (strcasecmp(auth_type, "basic") == 0) {
             curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             curl_easy_setopt(curl, CURLOPT_USERPWD, auth);
+            if (token) {
+                int token_header_len = strlen(token) + 15;
+                char* token_header = calloc(token_header_len, sizeof(char));
+                snprintf(token_header, token_header_len, "X-GitHub-OTP: %s", token);
+                headers = curl_slist_append(headers, token_header);
+            }
         } else if (strcasecmp(auth_type, "token") == 0) {
             auth_header = calloc(auth_header_len, sizeof(char));
             snprintf(auth_header, auth_header_len, "Authorization: token %s", auth);
@@ -73,7 +79,7 @@ extern char* curl_raw_request(char* url, char* auth_type, char* auth, char* meth
     }
 }
 
-struct json_object* curl_request(char* path, char* auth_type, char* auth, char* method, const char* body) {
+struct json_object* curl_request(char* path, char* auth_type, char* auth, char* method, const char* body, char* token) {
     struct json_object* response;
     char* message;
     char* merged;
@@ -86,7 +92,7 @@ struct json_object* curl_request(char* path, char* auth_type, char* auth, char* 
     full_url = calloc(full_url_len, sizeof(char));
     snprintf(full_url, full_url_len, "%s%s", base_url, path);
 
-    buffer = curl_raw_request(full_url, auth_type, auth, method, body);
+    buffer = curl_raw_request(full_url, auth_type, auth, method, body, token);
     response = json_tokener_parse(buffer);
     free(buffer);
     message = jsonh_get_string(response, "message");
@@ -112,7 +118,7 @@ extern char* github_find_milestone(char* repo, char* milestone, char* token) {
     query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/milestones", repo);
 
-    response = curl_request(query, "token", token, "GET", NULL);
+    response = curl_request(query, "token", token, "GET", NULL, NULL);
     array_len = json_object_array_length(response);
     for (i = 0; i < array_len; i++) {
         milestone_obj = json_object_array_get_idx(response, i);
@@ -159,7 +165,7 @@ extern struct json_object* github_get_issues(char* repo, char* filter, char* mil
         snprintf(query, query_len, "/repos/%s/issues", repo);
     }
 
-    response = curl_request(query, "token", token, "GET", NULL);
+    response = curl_request(query, "token", token, "GET", NULL, NULL);
     free(query);
     if (strcasecmp(filter, "prs") == 0 || strcasecmp(filter, "issues") == 0) {
         new_array = json_object_new_array();
@@ -187,7 +193,7 @@ extern struct json_object* github_get_issue(char* repo, char* issue, char* token
     query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues/%s", repo, issue);
 
-    response = curl_request(query, "token", token, "GET", NULL);
+    response = curl_request(query, "token", token, "GET", NULL, NULL);
     free(query);
     return response;
 }
@@ -202,7 +208,7 @@ extern struct json_object* github_edit_issue(char* repo, char* issue, struct jso
     query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues/%s", repo, issue);
 
-    response = curl_request(query, "token", token, "PATCH", payload);
+    response = curl_request(query, "token", token, "PATCH", payload, NULL);
     free(query);
     return response;
 }
@@ -217,7 +223,7 @@ extern struct json_object* github_create_issue(char* repo, struct json_object* i
     query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues", repo);
 
-    response = curl_request(query, "token", token, "POST", payload);
+    response = curl_request(query, "token", token, "POST", payload, NULL);
     free(query);
     return response;
 }
@@ -232,7 +238,7 @@ extern struct json_object* github_create_pr(char* repo, struct json_object* pr, 
     query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/pulls", repo);
 
-    response = curl_request(query, "token", token, "POST", payload);
+    response = curl_request(query, "token", token, "POST", payload, NULL);
     free(query);
     return response;
 }
@@ -246,7 +252,7 @@ extern struct json_object* github_merge_pr(char* repo, char* issue, char* token)
     query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/pulls/%s/merge", repo, issue);
 
-    response = curl_request(query, "token", token, "PUT", "{}");
+    response = curl_request(query, "token", token, "PUT", "{}", NULL);
     free(query);
     return response;
 }
@@ -260,7 +266,7 @@ extern struct json_object* github_get_comments(char* repo, char* issue, char* to
     query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues/%s/comments", repo, issue);
 
-    response = curl_request(query, "token", token, "GET", NULL);
+    response = curl_request(query, "token", token, "GET", NULL, NULL);
     free(query);
     return response;
 }
@@ -274,7 +280,7 @@ extern struct json_object* github_get_comment(char* repo, char* comment, char* t
     query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues/comments/%s", repo, comment);
 
-    response = curl_request(query, "token", token, "GET", NULL);
+    response = curl_request(query, "token", token, "GET", NULL, NULL);
     free(query);
     return response;
 }
@@ -289,7 +295,7 @@ extern struct json_object* github_edit_comment(char* repo, char* comment, struct
     query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues/comments/%s", repo, comment);
 
-    response = curl_request(query, "token", token, "PATCH", payload);
+    response = curl_request(query, "token", token, "PATCH", payload, NULL);
     free(query);
     return response;
 }
@@ -303,7 +309,7 @@ extern struct json_object* github_del_comment(char* repo, char* comment, char* t
     query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues/comments/%s", repo, comment);
 
-    response = curl_request(query, "token", token, "DELETE", NULL);
+    response = curl_request(query, "token", token, "DELETE", NULL, NULL);
     free(query);
     return response;
 }
@@ -318,7 +324,7 @@ extern struct json_object* github_create_comment(char* repo, char* issue, struct
     query = calloc(query_len, sizeof(char));
     snprintf(query, query_len, "/repos/%s/issues/%s/comments", repo, issue);
 
-    response = curl_request(query, "token", token, "POST", payload);
+    response = curl_request(query, "token", token, "POST", payload, NULL);
     free(query);
     return response;
 }
@@ -334,7 +340,28 @@ extern struct json_object* github_create_token(char* user, char* pass) {
     auth = calloc(auth_len, sizeof(char));
     snprintf(auth, auth_len, "%s:%s", user, pass);
 
-    response = curl_request("/authorizations", "basic", auth, "POST", payload);
+    response = curl_request("/authorizations", "basic", auth, "POST", payload, NULL);
+    free(auth);
+    if (response) {
+        json_object_object_add(config, "token", json_object_object_get(response, "token"));
+        json_object_object_add(config, "user", json_object_new_string(user));
+        return config;
+    }
+    return NULL;
+}
+
+extern struct json_object* github_create_token_2fa(char* user, char* pass, char* token) {
+    char* auth;
+    struct json_object* response;
+
+    const char* payload = "{\"scopes\": [\"repo\"], \"note\": \"git-gh extensions\"}";
+    int auth_len = strlen(user) + strlen(pass) + 2;
+    struct json_object* config = json_object_new_object();
+
+    auth = calloc(auth_len, sizeof(char));
+    snprintf(auth, auth_len, "%s:%s", user, pass);
+
+    response = curl_request("/authorizations", "basic", auth, "POST", payload, token);
     free(auth);
     if (response) {
         json_object_object_add(config, "token", json_object_object_get(response, "token"));

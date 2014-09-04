@@ -1,4 +1,4 @@
-extern char* curl_raw_request(char*, char*, char*, char*, const char*);
+extern char* curl_raw_request(char*, char*, char*, char*, const char*, char*);
 
 extern char* github_find_milestone(char*, char*, char*);
 
@@ -17,3 +17,4 @@ extern struct json_object* github_del_comment(char*, char*, char*);
 extern struct json_object* github_create_comment(char*, char*, struct json_object*, char*);
 
 extern struct json_object* github_create_token(char*, char*);
+extern struct json_object* github_create_token_2fa(char*, char*, char*);
