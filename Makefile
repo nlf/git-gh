@@ -1,7 +1,7 @@
 CC = gcc
 PREFIX = /usr/local/bin
-LFLAGS = -ljson-c -lcurl -liniparser
-CFLAGS = -Wall -O2 -std=gnu99
+LFLAGS = $(shell pkg-config --libs json-c) -lcurl -liniparser
+CFLAGS = -Wall -O2 -std=gnu99 $(shell pkg-config --cflags json-c)
 
 BIN = bin/git-accept bin/git-assign bin/git-claim bin/git-close \
 	  bin/git-comment bin/git-detail bin/git-ghsetup bin/git-issue \

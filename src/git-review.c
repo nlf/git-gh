@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
     if (issue) {
         diff_url = jsonh_get_string(issue, "pull_request.diff_url");
         if (diff_url) {
-            diff = curl_raw_request(diff_url, "token", token, "GET", NULL);
+            diff = curl_raw_request(diff_url, "token", token, "GET", NULL, NULL);
             printf("%s\n", diff);
             return 0;
         }
